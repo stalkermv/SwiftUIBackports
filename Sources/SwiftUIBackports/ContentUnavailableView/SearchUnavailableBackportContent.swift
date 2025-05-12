@@ -23,7 +23,7 @@ public struct SearchUnavailableBackportContent {
     /// A view that represents the description of a static `ContentUnavailableView.search` view.
     ///
     /// You don't create this type directly. SwiftUI creates it when you build
-    /// a search``ContentUnavailableView`.
+    /// a search `ContentUnavailableView`.
     public struct Description : View {
         
         public var body: some View {
