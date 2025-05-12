@@ -5,6 +5,7 @@
 //  Created by Valeriy Malishevskyi on 02.09.2024.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 extension View {
@@ -102,3 +103,5 @@ public enum ToolbarTitleDisplayModeBackport {
         }
     }
 }
+
+#endif

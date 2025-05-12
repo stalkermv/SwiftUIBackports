@@ -34,7 +34,7 @@ extension View {
     ///   - feedback: Which type of feedback to play.
     ///   - trigger: A value to monitor for changes to determine when to play.
     nonisolated public func sensoryFeedback<T>(_ feedback: SensoryFeedbackBackport, trigger: T) -> some View where T : Equatable {
-        if #available(iOS 17.0, watchOS 8.0, *) {
+        if #available(iOS 17.0, watchOS 8.0, macOS 14.0, tvOS 17.0, *) {
             return self.sensoryFeedback(feedback.backportValue, trigger: trigger)
         } else {
             return self
@@ -71,7 +71,7 @@ extension View {
     ///   - condition: A closure to determine whether to play the feedback when
     ///     `trigger` changes.
     nonisolated public func sensoryFeedback<T>(_ feedback: SensoryFeedbackBackport, trigger: T, condition: @escaping (_ oldValue: T, _ newValue: T) -> Bool) -> some View where T : Equatable {
-        if #available(iOS 17.0, watchOS 8.0, *) {
+        if #available(iOS 17.0, watchOS 8.0, macOS 14.0, tvOS 17.0, *) {
             return self.sensoryFeedback(feedback.backportValue, trigger: trigger, condition: condition)
         } else {
             return self
@@ -112,7 +112,7 @@ extension View {
     ///   - feedback: A closure to determine whether to play the feedback and
     ///     what type of feedback to play when `trigger` changes.
     nonisolated public func sensoryFeedback<T>(trigger: T, _ feedback: @escaping (_ oldValue: T, _ newValue: T) -> SensoryFeedbackBackport?) -> some View where T : Equatable {
-        if #available(iOS 17.0, watchOS 8.0, *) {
+        if #available(iOS 17.0, watchOS 8.0, macOS 14.0, tvOS 17.0, *) {
             return self.sensoryFeedback(trigger: trigger, { feedback($0, $1)?.backportValue })
         } else {
             return self
@@ -247,7 +247,7 @@ public enum SensoryFeedbackBackport : Equatable, Sendable {
         /// Indicates a collision between large or heavyweight UI objects.
         case heavy
         
-        @available(iOS 17.0, *)
+        @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
         var backportValue: SensoryFeedback.Weight {
             switch self {
             case .light:
@@ -276,7 +276,7 @@ public enum SensoryFeedbackBackport : Equatable, Sendable {
         /// Indicates a collision between soft or flexible UI objects.
         case soft
         
-        @available(iOS 17.0, *)
+        @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
         var backportValue: SensoryFeedback.Flexibility {
             switch self {
             case .rigid:
@@ -289,7 +289,7 @@ public enum SensoryFeedbackBackport : Equatable, Sendable {
         }
     }
     
-    @available(iOS 17.0, *)
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
     var backportValue: SensoryFeedback {
         switch self {
         case .success:
@@ -313,7 +313,7 @@ public enum SensoryFeedbackBackport : Equatable, Sendable {
         case .levelChange:
             return .levelChange
         case .pathComplete:
-            if #available(iOS 17.5, *) {
+            if #available(iOS 17.5, macOS 14.5, tvOS 17.5, watchOS 10.5, *) {
                 return .pathComplete
             } else {
                 return .success

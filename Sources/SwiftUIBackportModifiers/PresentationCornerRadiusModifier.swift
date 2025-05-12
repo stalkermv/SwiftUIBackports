@@ -15,7 +15,7 @@ public struct PresentationCornerRadiusModifier: ViewModifier {
     }
     
     public func body(content: Content) -> some View {
-        if #available(iOS 16.4, *) {
+        if #available(iOS 16.4, macOS 13.4, tvOS 17.4, watchOS 10.4, *) {
             content
                 .presentationCornerRadius(cornerRadius)
         } else {

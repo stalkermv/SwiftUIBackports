@@ -5,6 +5,7 @@
 //  Created by Valeriy Malishevskyi on 01.08.2024.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import SwiftUIBackportModifiers
 
@@ -292,3 +293,4 @@ extension View {
         return self.modifier(modifier)
     }
 }
+#endif

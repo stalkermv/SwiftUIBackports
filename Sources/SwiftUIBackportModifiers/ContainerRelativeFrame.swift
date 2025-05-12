@@ -5,6 +5,8 @@
 //  Created by Valeriy Malishevskyi on 01.08.2024.
 //
 
+#if canImport(UIKit)
+  
 import SwiftUI
 
 public struct ContainerRelativeFrameModifier: ViewModifier {
@@ -145,3 +147,5 @@ fileprivate struct MiliViewRoot<Content: View>: _VariadicView_MultiViewRoot {
         views(children)
     }
 }
+
+#endif

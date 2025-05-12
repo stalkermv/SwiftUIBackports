@@ -4,7 +4,7 @@
 //
 //  Created by Valeriy Malishevskyi on 01.10.2024.
 //
-
+#if canImport(UIKit)
 import SwiftUI
 import SwiftUIIntrospect
 
@@ -212,3 +212,4 @@ extension UICollectionViewCell {
         return view.subviews.first.flatMap(findScrollViewRecursive)
     }
 }
+#endif

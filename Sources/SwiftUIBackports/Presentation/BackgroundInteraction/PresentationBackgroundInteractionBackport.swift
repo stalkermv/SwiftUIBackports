@@ -5,6 +5,7 @@
 //  Created by Valeriy Malishevskyi on 21.08.2023.
 //
 
+#if canImport(UIKit)
 import Foundation
 
 @available(iOS, introduced: 15, deprecated: 16.4)
@@ -46,3 +47,4 @@ public struct PresentationBackgroundInteractionBackport : Sendable {
         PresentationBackgroundInteractionBackport(largestUndimmedDetent: .none)
     }
 }
+#endif

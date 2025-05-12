@@ -14,7 +14,7 @@ public struct SelectionDisabledModifier: ViewModifier {
         self.isDisabled = isDisabled
     }
     public func body(content: Content) -> some View {
-        if #available(iOS 17, *) {
+        if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
             content
                 .selectionDisabled(isDisabled)
                 ._trait(SelectionDisabledTraitKey.self, isDisabled)

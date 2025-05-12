@@ -41,10 +41,15 @@ extension View {
     @available(iOS, introduced: 15, deprecated: 16.4, message: "Use `View.presentationCompactAdaptation(_:)` instead.")
     @_disfavoredOverload
     @ViewBuilder public func presentationCompactAdaptation(_ adaptation: PresentationAdaptationBackport) -> some View {
-        if #available(iOS 16.4, *) {
+        if #available(iOS 16.4, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             self.presentationCompactAdaptation(adaptation.backportValue)
         } else {
+            #if os(iOS)
             self.modifier(PresentationCompactAdaptationModifier(adaptation: adaptation))
+            #elseif os(macOS)
+            let _ = print("PresentationCompactAdaptation is not available on macOS.")
+            EmptyView()
+            #endif
         }
     }
 }
@@ -66,7 +71,7 @@ public enum PresentationAdaptationBackport : Sendable {
     /// Prefer a full-screen-cover appearance when adapting for size classes.
     case fullScreenCover
     
-    @available(iOS 16.4, *)
+    @available(iOS 16.4, macOS 13.3, tvOS 17.0, watchOS 10.0, *)
     var backportValue: PresentationAdaptation {
         switch self {
         case .automatic:
@@ -83,6 +88,7 @@ public enum PresentationAdaptationBackport : Sendable {
     }
 }
 
+#if canImport(UIKit)
 @available(iOS, introduced: 15, deprecated: 16.4)
 public struct PresentationCompactAdaptationModifier: ViewModifier {
     let adaptation: PresentationAdaptationBackport
@@ -140,3 +146,4 @@ private class CompactAdaptationViewController: UIViewController {
         }
     }
 }
+#endif

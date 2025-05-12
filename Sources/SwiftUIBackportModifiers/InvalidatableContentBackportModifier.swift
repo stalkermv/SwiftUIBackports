@@ -20,3 +20,12 @@ public struct InvalidatableContentBackportModifier: ViewModifier {
         }
     }
 }
+
+public struct SwiftUITestModifier: ViewModifier {
+    let test = true
+
+    public func body(content: Content) -> some View {
+        content
+        .environment(\.accessibilityEnabled, true)
+    }
+}

@@ -33,7 +33,11 @@ public struct FillShapeStyle: ShapeStyleBackport {
     public init() {}
 
     public func resolve(in environment: EnvironmentValues) -> Color {
+        #if os(iOS) || os(tvOS) || targetEnvironment(macCatalyst)
         Color(.systemFill)
+        #elseif os(macOS)
+        Color(.controlBackgroundColor)
+        #endif
     }
 }
 

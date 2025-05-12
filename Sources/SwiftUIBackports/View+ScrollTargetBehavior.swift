@@ -70,7 +70,7 @@ public enum ScrollTargetBehaviorBackport {
     case paging
     case viewAligned(limitBehavior: LimitBehavior = .automatic)
     
-    @available(iOS 17.0, *)
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
     var backportValue: any ScrollTargetBehavior {
         switch self {
         case .paging:
@@ -133,7 +133,7 @@ public struct LimitBehavior {
         LimitBehavior(behavior: .never)
     }
     
-    @available(iOS 17.0, *)
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
     var backportValue: ViewAlignedScrollTargetBehavior.LimitBehavior {
         switch behavior {
         case .automatic:
@@ -141,13 +141,13 @@ public struct LimitBehavior {
         case .always:
             return .always
         case .alwaysByFew:
-            if #available(iOS 18, *) {
+            if #available(iOS 18, macOS 15.0, tvOS 18.0, watchOS 11.0, *) {
                 return .alwaysByFew
             } else {
                 return .automatic
             }
         case .alwaysByOne:
-            if #available(iOS 18, *) {
+            if #available(iOS 18, macOS 15.0, tvOS 18.0, watchOS 11.0, *) {
                 return .alwaysByOne
             } else {
                 return .automatic

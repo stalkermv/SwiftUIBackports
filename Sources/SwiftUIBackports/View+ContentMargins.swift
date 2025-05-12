@@ -226,6 +226,7 @@ struct ContentMarginsBackportModifier: ViewModifier {
     let placement: ContentMarginPlacementBackport
 
     func body(content: Content) -> some View {
+        #if os(iOS)
         content.introspect(.scrollView, on: .iOS(.v16)) { scrollView in
             if let length = length {
                 scrollView.contentInset = UIEdgeInsets(
@@ -236,5 +237,17 @@ struct ContentMarginsBackportModifier: ViewModifier {
                 )
             }
         }
+        #elseif os(macOS)
+        content.introspect(.scrollView, on: .macOS(.v10_15, .v11, .v12, .v13, .v14, .v15)) { scrollView in
+            if let length = length {
+                scrollView.contentInsets = NSEdgeInsets(
+                    top: edges.contains(.top) ? -length : 0,
+                    left: edges.contains(.leading) ? length : 0,
+                    bottom: edges.contains(.bottom) ? -length : 0,
+                    right: edges.contains(.trailing) ? length : 0
+                )
+            }
+        }
+        #endif
     }
 }

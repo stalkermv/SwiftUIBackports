@@ -19,7 +19,7 @@ public struct OnChangeBackportModifier<V: Equatable> : ViewModifier {
     }
     
     public func body(content: Content) -> some View {
-        if #available(iOS 17, *) {
+        if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
             content.onChange(of: value, initial: initial, action)
         } else {
             content

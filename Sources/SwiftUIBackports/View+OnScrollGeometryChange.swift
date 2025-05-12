@@ -5,6 +5,7 @@
 //  Created by Valeriy Malishevskyi on 01.10.2024.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import SwiftUIBackportModifiers
 
@@ -73,3 +74,4 @@ extension View {
         modifier(OnScrollGeometryChangeBackportModifier(type: type, transform: transform, action: action))
     }
 }
+#endif
