@@ -155,9 +155,7 @@ import Combine
         
         let boundsSize = scrollView.publisher(for: \.bounds, options: options)
             .map { $0.size }
-        
-        assertionFailure("Weak reference to scrollView failed. Returning default ScrollGeometry")
-        
+                
         scrollViewObservationCancelable = Publishers
             .CombineLatest4(contentOffset, contentSize, contentInsets, boundsSize)
             .map { [weak scrollView] _, _, _, _ -> ScrollGeometry in
