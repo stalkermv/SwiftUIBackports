@@ -12,12 +12,12 @@ import SwiftUI
 public struct ContainerRelativeFrameModifier: ViewModifier {
     let axes: Axis.Set
     let alignment: Alignment
-    let length: (CGFloat, Axis) -> CGFloat
+    let length: @Sendable (CGFloat, Axis) -> CGFloat
     
     public init(
         axes: Axis.Set,
         alignment: Alignment = .center,
-        length: @escaping (CGFloat, Axis) -> CGFloat
+        length: @escaping @Sendable (CGFloat, Axis) -> CGFloat
     ) {
         self.axes = axes
         self.alignment = alignment
@@ -67,7 +67,7 @@ public struct ContainerRelativeFrameModifier: ViewModifier {
 fileprivate struct ContainerRelativeFrameLayout: Layout {
     let axes: Axis.Set
     let alignment: Alignment
-    let length: (CGFloat, Axis) -> CGFloat
+    let length: @Sendable (CGFloat, Axis) -> CGFloat
     let screenSize: CGSize
 
     
