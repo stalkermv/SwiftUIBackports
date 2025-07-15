@@ -23,7 +23,7 @@ extension ShapeStyle where Self == FillShapeStyle {
     /// input fields, search bars, or buttons on iOS.
     /// Use the quaternary version of this style to fill large areas that
     /// contain complex content, such as an expanded table cell on iOS.
-    public static var fill: FillShapeStyle {
+    @_disfavoredOverload public static var fill: FillShapeStyle {
         FillShapeStyle()
     }
 }

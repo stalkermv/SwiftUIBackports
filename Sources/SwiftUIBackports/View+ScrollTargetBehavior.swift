@@ -56,6 +56,7 @@ extension View {
     /// a layout container like ``LazyVStack`` or ``HStack`` and each individual
     /// view in that layout will be considered for alignment.
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+    @_disfavoredOverload
     nonisolated public func scrollTargetBehavior(_ behavior: ScrollTargetBehaviorBackport) -> some View {
         if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             let view = self.scrollTargetBehavior(behavior.backportValue)

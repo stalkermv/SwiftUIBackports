@@ -44,6 +44,7 @@ extension View {
     ///     }
     ///     .scrollTargetLayout()
     ///
+    @_disfavoredOverload
     public func scrollTargetLayout(isEnabled: Bool = true) -> some View {
         modifier(ScrollTargetLayoutBackportModifier(isEnabled: isEnabled))
     }

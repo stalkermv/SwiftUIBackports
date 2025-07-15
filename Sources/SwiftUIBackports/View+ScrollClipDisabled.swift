@@ -14,6 +14,7 @@ extension View {
     /// - Returns: A view that disables the scroll clipping behavior.
     ///
     /// - Warning: This method is available only in iOS 17.0 and later. On earlier versions of iOS, this method has no effect.
+    @_disfavoredOverload
     public func scrollClipDisabled(_ disabled: Bool = true) -> some View {
         modifier(ScrollClipDisabledModifier(disabled: disabled))
     }

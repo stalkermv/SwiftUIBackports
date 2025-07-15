@@ -4,7 +4,7 @@ public typealias Subview = _VariadicView_Children.Element
 public typealias Subviews = _VariadicView_Children
 
 extension ForEach {
-    @MainActor
+    @_disfavoredOverload @MainActor
     public init<V: View, C: View>(
         subviews view: V,
         @ViewBuilder content: @escaping (Subview) -> C
