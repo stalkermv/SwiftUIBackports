@@ -17,7 +17,14 @@ public struct TabViewPageClipDisabledModifier: ViewModifier {
     
     public func body(content: Content) -> some View {
         #if os(iOS)
-        content.introspect(.tabView(style: .page), on: .iOS(.v16), .iOS(.v17), .iOS(.v18)) { scrollView in
+        content
+            .introspect(
+                .tabView(style: .page),
+                on: .iOS(.v16),
+                .iOS(.v17),
+                .iOS(.v18),
+                .iOS(.v26)
+            ) { scrollView in
             scrollView.clipsToBounds = !isDisabled
         }
         #elseif os(macOS)
