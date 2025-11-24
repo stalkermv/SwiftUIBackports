@@ -6,7 +6,9 @@
 //
 #if canImport(UIKit)
 import SwiftUI
+#if USE_SWIFTUI_INTROSPECT
 import SwiftUIIntrospect
+#endif
 
 @available(iOS, introduced: 14.0, deprecated: 18.0)
 public struct OnScrollGeometryChangeBackportModifier<T: Equatable> : ViewModifier {
@@ -60,12 +62,16 @@ struct ScrollGeometryProxyWrapper<T>: ViewModifier where T: Equatable {
     }
 
     func body(content: Content) -> some View {
+        #if USE_SWIFTUI_INTROSPECT
         content
             .introspect(.scrollView, on: .iOS(.v16, .v17)) { scrollView in
                 DispatchQueue.main.async {
                     manager.observe(scrollable: scrollView, transform, action)
                 }
             }
+        #else
+        content
+        #endif
     }
 }
 

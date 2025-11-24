@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+#if USE_SWIFTUI_INTROSPECT
 import SwiftUIIntrospect
+#endif
 
 public struct TabViewPageClipDisabledModifier: ViewModifier {
     let isDisabled: Bool
@@ -16,6 +18,7 @@ public struct TabViewPageClipDisabledModifier: ViewModifier {
     }
     
     public func body(content: Content) -> some View {
+        #if USE_SWIFTUI_INTROSPECT
         #if os(iOS)
         content
             .introspect(
@@ -31,6 +34,9 @@ public struct TabViewPageClipDisabledModifier: ViewModifier {
         content.introspect(.tabView, on: .macOS(.v10_15, .v11, .v12, .v13, .v14, .v15)) { tabView in
             tabView.clipsToBounds = !isDisabled
         }
+        #endif
+        #else
+        content
         #endif
     }
 }

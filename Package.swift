@@ -10,6 +10,9 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(name: "SwiftUIBackports", targets: ["SwiftUIBackports"]),
     ],
+    traits: [
+        .trait(name: "useSwiftUIIntrospect")
+    ],
     dependencies: [
         .package(url: "https://github.com/siteline/swiftui-introspect", from: "26.0.0")
     ],
@@ -23,7 +26,14 @@ let package = Package(
         .target(
             name: "SwiftUIBackportModifiers",
             dependencies: [
-                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect")
+                .product(
+                    name: "SwiftUIIntrospect",
+                    package: "swiftui-introspect",
+                    condition: .when(traits: ["useSwiftUIIntrospect"])
+                )
+            ],
+            swiftSettings: [
+                .define("USE_SWIFTUI_INTROSPECT", .when(traits: ["useSwiftUIIntrospect"]))
             ]
         ),
         .testTarget(
