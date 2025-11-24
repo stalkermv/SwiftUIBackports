@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if USE_SWIFTUI_INTROSPECT
+import SwiftUIIntrospect
+#endif
 
 extension View {
 
@@ -228,6 +231,7 @@ struct ContentMarginsBackportModifier: ViewModifier {
     let placement: ContentMarginPlacementBackport
 
     func body(content: Content) -> some View {
+        #if USE_SWIFTUI_INTROSPECT
         #if os(iOS)
         content.introspect(.scrollView, on: .iOS(.v16)) { scrollView in
             if let length = length {
@@ -250,6 +254,9 @@ struct ContentMarginsBackportModifier: ViewModifier {
                 )
             }
         }
+        #endif
+        #else
+        content
         #endif
     }
 }
