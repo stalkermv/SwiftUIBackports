@@ -50,7 +50,7 @@ extension View {
     ///   - newValue: The new value that failed the comparison check.
     ///
     /// - Returns: A view that fires an action when the specified value changes.
-    @backDeployed(before: iOS 17)
+    @_disfavoredOverload
     public func onChange<V>(
         of value: V,
         initial: Bool = false,
@@ -100,7 +100,7 @@ extension View {
     ///   - action: A closure to run when the value changes.
     ///
     /// - Returns: A view that fires an action when the specified value changes.
-    @backDeployed(before: iOS 17)
+    @_disfavoredOverload
     public func onChange<V>(of value: V, initial: Bool = false, _ action: @escaping () -> Void) -> ModifiedContent<Self, OnChangeBackportModifier<V>>
     where V : Equatable {
         modifier(OnChangeBackportModifier(value: value, initial: initial, action: { _, _ in action() }))
