@@ -23,6 +23,36 @@ extension ForEach {
     }
 }
 
+public struct ForEachSubviewCollectionBackport<Content> : RandomAccessCollection where Content : View {
+    
+    fileprivate let children: _VariadicView.Children
+    let content: (Subview) -> Content
+    
+    public var body: some View {
+        SwiftUI.ForEach(children, id: \.id) {
+            content($0)
+        }
+    }
+    
+    public var startIndex: Int {
+        children.startIndex
+    }
+    
+    public var endIndex: Int {
+        children.endIndex
+    }
+    
+    public subscript(index: Int) -> Subview {
+        children[index]
+    }
+
+    public typealias Element = Subview
+    public typealias Index = Int
+    public typealias Indices = Range<Int>
+    public typealias Iterator = IndexingIterator<ForEachSubviewCollectionBackport<Content>>
+    public typealias SubSequence = Slice<ForEachSubviewCollectionBackport<Content>>
+}
+
 public struct ForEachSubview<Root: View, Content: View>: View {
     let root: () -> Root
     let content: (Subview) -> Content

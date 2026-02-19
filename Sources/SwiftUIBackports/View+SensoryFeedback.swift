@@ -33,6 +33,7 @@ extension View {
     /// - Parameters:
     ///   - feedback: Which type of feedback to play.
     ///   - trigger: A value to monitor for changes to determine when to play.
+    @_disfavoredOverload
     nonisolated public func sensoryFeedback<T>(_ feedback: SensoryFeedbackBackport, trigger: T) -> some View where T : Equatable {
         if #available(iOS 17.0, watchOS 8.0, macOS 14.0, tvOS 17.0, *) {
             return self.sensoryFeedback(feedback.backportValue, trigger: trigger)
@@ -70,6 +71,7 @@ extension View {
     ///   - trigger: A value to monitor for changes to determine when to play.
     ///   - condition: A closure to determine whether to play the feedback when
     ///     `trigger` changes.
+    @_disfavoredOverload
     nonisolated public func sensoryFeedback<T>(_ feedback: SensoryFeedbackBackport, trigger: T, condition: @escaping (_ oldValue: T, _ newValue: T) -> Bool) -> some View where T : Equatable {
         if #available(iOS 17.0, watchOS 8.0, macOS 14.0, tvOS 17.0, *) {
             return self.sensoryFeedback(feedback.backportValue, trigger: trigger, condition: condition)
@@ -111,6 +113,7 @@ extension View {
     ///   - trigger: A value to monitor for changes to determine when to play.
     ///   - feedback: A closure to determine whether to play the feedback and
     ///     what type of feedback to play when `trigger` changes.
+    @_disfavoredOverload
     nonisolated public func sensoryFeedback<T>(trigger: T, _ feedback: @escaping (_ oldValue: T, _ newValue: T) -> SensoryFeedbackBackport?) -> some View where T : Equatable {
         if #available(iOS 17.0, watchOS 8.0, macOS 14.0, tvOS 17.0, *) {
             return self.sensoryFeedback(trigger: trigger, { feedback($0, $1)?.backportValue })
