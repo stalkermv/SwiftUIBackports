@@ -55,6 +55,7 @@ extension View {
     /// 
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
+    @_disfavoredOverload
     nonisolated public func safeAreaPadding(_ edges: Edge.Set = .all, _ length: CGFloat) -> some View {
         let insets = EdgeInsets(
             top: edges.contains(.top) ? length : 0,
