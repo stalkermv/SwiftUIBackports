@@ -44,12 +44,16 @@ extension View {
         if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 10.0, *) {
             self.onScrollVisibilityChange(threshold: threshold, action)
         } else {
+            #if canImport(UIKit)
             self.modifier(
                 ScrollVisibilityChangeBackportModifier(
                     threshold: threshold,
                     action: action
                 )
             )
+            #else
+            self
+            #endif
         }
     }
 }

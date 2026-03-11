@@ -8,7 +8,6 @@
 import SwiftUI
 
 public struct ScrollVisibilityChangeBackportModifier: ViewModifier {
-    let bounds = UIScreen.main.bounds
     let threshold: CGFloat
     let onChange: (Bool) -> Void
     
@@ -21,6 +20,8 @@ public struct ScrollVisibilityChangeBackportModifier: ViewModifier {
     }
     
     public func body(content: Content) -> some View {
+        #if canImport(UIKit)
+        let bounds = UIScreen.main.bounds
         content
             .onGeometryChange(for: Bool.self) { proxy in
                 let safeAreaHeight = bounds.height - proxy.safeAreaInsets.top - proxy.safeAreaInsets.bottom
@@ -32,6 +33,8 @@ public struct ScrollVisibilityChangeBackportModifier: ViewModifier {
             } action: { new in
                 onChange(new)
             }
+        #else
+        content
+        #endif
     }
 }
-

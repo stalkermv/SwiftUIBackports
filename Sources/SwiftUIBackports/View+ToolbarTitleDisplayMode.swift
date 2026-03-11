@@ -5,7 +5,6 @@
 //  Created by Valeriy Malishevskyi on 02.09.2024.
 //
 
-#if canImport(UIKit)
 import SwiftUI
 
 extension View {
@@ -27,9 +26,13 @@ extension View {
     nonisolated public func toolbarTitleDisplayMode(_ mode: ToolbarTitleDisplayModeBackport) -> some View {
         if #available (iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             return self.toolbarTitleDisplayMode(mode.backportValue)
-        } else {
-            return self.navigationBarTitleDisplayMode(mode.navigationTitleDisplayMode)
         }
+
+        #if os(iOS)
+        return self.navigationBarTitleDisplayMode(mode.navigationTitleDisplayMode)
+        #else
+        return self
+        #endif
     }
 
 }
@@ -50,6 +53,7 @@ public enum ToolbarTitleDisplayModeBackport {
     /// has no effect in macOS.
    case automatic
 
+    #if !os(macOS)
     /// The large mode.
     ///
     /// In iOS, and watchOS, this displays the toolbar title below the
@@ -68,6 +72,11 @@ public enum ToolbarTitleDisplayModeBackport {
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)
     case inlineLarge(fallback: NavigationBarItem.TitleDisplayMode = .automatic)
+    #else
+    /// In macOS this is only kept as a compile-safe surface and has no effect
+    /// before the native API is available.
+    case inlineLarge
+    #endif
 
     /// The inline mode.
     ///
@@ -76,7 +85,25 @@ public enum ToolbarTitleDisplayModeBackport {
     /// in macOS.
     case inline
     
-    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+}
+
+#if os(macOS)
+@available(macOS 14.0, *)
+extension ToolbarTitleDisplayModeBackport {
+    var backportValue: ToolbarTitleDisplayMode {
+        switch self {
+        case .automatic:
+            return .automatic
+        case .inlineLarge:
+            return .inlineLarge
+        case .inline:
+            return .inline
+        }
+    }
+}
+#else
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+extension ToolbarTitleDisplayModeBackport {
     var backportValue: ToolbarTitleDisplayMode {
         switch self {
         case .automatic:
@@ -89,7 +116,11 @@ public enum ToolbarTitleDisplayModeBackport {
             return .inline
         }
     }
-    
+}
+#endif
+
+#if os(iOS)
+extension ToolbarTitleDisplayModeBackport {
     var navigationTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
         switch self {
         case .automatic:
@@ -103,5 +134,4 @@ public enum ToolbarTitleDisplayModeBackport {
         }
     }
 }
-
 #endif

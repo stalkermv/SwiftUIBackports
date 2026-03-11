@@ -5,9 +5,10 @@
 //  Created by Valeriy Malishevskyi on 01.08.2024.
 //
 
-#if canImport(UIKit)
 import SwiftUI
+#if canImport(UIKit)
 import SwiftUIBackportModifiers
+#endif
 
 extension View {
 
@@ -93,8 +94,16 @@ extension View {
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
     @_disfavoredOverload
     public func containerRelativeFrame(_ axes: Axis.Set, alignment: Alignment = .center) -> some View {
+        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+            return self.containerRelativeFrame(axes, alignment: alignment)
+        }
+
+        #if canImport(UIKit)
         let modifier = ContainerRelativeFrameModifier(axes: axes, alignment: alignment, length: { length, _ in length })
         return self.modifier(modifier)
+        #else
+        return self
+        #endif
     }
 
 
@@ -187,6 +196,17 @@ extension View {
         spacing: CGFloat,
         alignment: Alignment = .center
     ) -> some View {
+        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+            return self.containerRelativeFrame(
+                axes,
+                count: count,
+                span: span,
+                spacing: spacing,
+                alignment: alignment
+            )
+        }
+
+        #if canImport(UIKit)
         let modifier = ContainerRelativeFrameModifier(
             axes: axes,
             alignment: alignment,
@@ -197,6 +217,9 @@ extension View {
             }
         )
         return self.modifier(modifier)
+        #else
+        return self
+        #endif
     }
 
 
@@ -287,6 +310,15 @@ extension View {
         alignment: Alignment = .center,
         _ length: @escaping (CGFloat, Axis) -> CGFloat
     ) -> some View {
+        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+            return self.containerRelativeFrame(
+                axes,
+                alignment: alignment,
+                length
+            )
+        }
+
+        #if canImport(UIKit)
         let modifier = ContainerRelativeFrameModifier(
             axes: axes,
             alignment: alignment,
@@ -294,6 +326,8 @@ extension View {
         )
         
         return self.modifier(modifier)
+        #else
+        return self
+        #endif
     }
 }
-#endif
