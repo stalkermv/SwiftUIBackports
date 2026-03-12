@@ -8,7 +8,9 @@
 import SwiftUI
 
 extension Text {
-    public init<F>(_ input: F.FormatInput, format: F) where F : FormatStyle, F.FormatInput : Equatable, F.FormatOutput == AttributedString {
+    @_disfavoredOverload
+    public init<F>(_ input: F.FormatInput, format: F)
+    where F : FormatStyle, F.FormatInput : Equatable, F.FormatOutput == AttributedString {
         let string = format.format(input)
         self.init(string)
     }
