@@ -75,11 +75,36 @@ extension Subview {
     /// - Returns: The tag value for the given type if the subview has one,
     ///   otherwise `nil`.
     public func tag<V>(for type: V.Type) -> V? where V : Hashable {
-        values.compactMap {
-            withUnsafePointer(to: Mirror(reflecting: $0).descendant(0, Self.tagKey)) {
-                $0.pointee as? AnyHashable
+        for entry in values {
+            if let value = Self.tag(in: entry, for: type) {
+                return value
             }
-        }.first(where: { $0 is V }) as? V
+        }
+        return nil
+    }
+
+    /// The tag carried by one traits entry, wherever inside it that sits.
+    ///
+    /// Searched by name rather than reached by index. An entry is a key/value
+    /// pair and the tag lives under the value half, but which child that is has
+    /// already moved once: `.tag()` now writes through
+    /// `_TagTraitWritingModifier`, and the tag arrived at child 1 where this
+    /// used to read child 0. Nothing raised — every lookup simply returned
+    /// `nil`, so a picker's items all reported themselves unselected and taps
+    /// did nothing.
+    ///
+    /// Two children is a short loop, and it survives the next reordering. It
+    /// still depends on the member being called `tagged`, which is as far as
+    /// reflection into someone else's layout can be made safe.
+    private static func tag<V>(in entry: Any, for type: V.Type) -> V? {
+        for child in Mirror(reflecting: entry).children {
+            if let tagged = Mirror(reflecting: child.value).descendant(Self.tagKey),
+               Swift.type(of: tagged) == V.self,
+               let value = tagged as? V {
+                return value
+            }
+        }
+        return nil
     }
 
     /// Returns true if the container values contain a tag matching a given
@@ -90,11 +115,7 @@ extension Subview {
     /// - Parameter tag: The tag value to check for.
     /// - Returns: If the container values has a tag matching the given value.
     public func hasTag<V>(_ tag: V) -> Bool where V : Hashable {
-        values.contains {
-            withUnsafePointer(to: Mirror(reflecting: $0).descendant(0, Self.tagKey)) {
-                $0.pointee as? V
-            } == tag
-        }
+        self.tag(for: V.self) == tag
     }
 }
 
