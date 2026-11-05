@@ -27,6 +27,7 @@ extension View {
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
     @available(iOS, deprecated: 17.0)
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     public func invalidatableContent(_ invalidatable: Bool = true) -> some View {
         if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             return self.invalidatableContent(invalidatable)

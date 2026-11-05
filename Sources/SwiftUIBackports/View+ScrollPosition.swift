@@ -76,6 +76,7 @@ extension View {
     /// If no anchor has been provided, SwiftUI will scroll the minimal amount
     /// when using the scroll position to programmatically scroll to a view.
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     public func scrollPosition(id: Binding<(some Hashable)?>, anchor: UnitPoint? = nil) -> some View {
         return self.modifier(ScrollPositionBackportModifier(id: id, anchor: anchor))
     }

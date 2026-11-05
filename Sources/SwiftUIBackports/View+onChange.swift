@@ -51,6 +51,7 @@ extension View {
     ///
     /// - Returns: A view that fires an action when the specified value changes.
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     public func onChange<V>(
         of value: V,
         initial: Bool = false,
@@ -101,6 +102,7 @@ extension View {
     ///
     /// - Returns: A view that fires an action when the specified value changes.
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     public func onChange<V>(of value: V, initial: Bool = false, _ action: @escaping () -> Void) -> ModifiedContent<Self, OnChangeBackportModifier<V>>
     where V : Equatable {
         modifier(OnChangeBackportModifier(value: value, initial: initial, action: { _, _ in action() }))

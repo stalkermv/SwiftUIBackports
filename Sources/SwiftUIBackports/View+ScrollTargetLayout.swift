@@ -45,6 +45,7 @@ extension View {
     ///     .scrollTargetLayout()
     ///
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     public func scrollTargetLayout(isEnabled: Bool = true) -> some View {
         modifier(ScrollTargetLayoutBackportModifier(isEnabled: isEnabled))
     }

@@ -110,6 +110,7 @@ extension View {
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     public func contentMargins(_ edges: Edge.Set = .all, _ length: CGFloat? = nil, for placement: ContentMarginPlacementBackport = .automatic) -> some View {
         if #available (iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             return contentMargins(edges, length, for: placement.backport)
@@ -164,6 +165,7 @@ extension View {
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     public func contentMargins(_ length: CGFloat, for placement: ContentMarginPlacementBackport = .automatic) -> some View {
         if #available(iOS 17, macOS 14, tvOS 17, watchOS 10, *) {
             return contentMargins(.all, length, for: placement.backport)

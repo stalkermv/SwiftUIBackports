@@ -32,6 +32,7 @@ extension View {
     ///   default.
     @available(iOS, introduced: 15, deprecated: 16.4, message: "Use `View.presentationCornerRadius(_:)` instead.")
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 16.4+).")
     public func presentationCornerRadius(_ cornerRadius: CGFloat?) -> some View {
         let modifier = PresentationCornerRadiusModifier(cornerRadius: cornerRadius)
         return self.modifier(modifier)

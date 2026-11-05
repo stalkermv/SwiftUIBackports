@@ -15,6 +15,7 @@ extension View {
     ///
     /// - Warning: This method is available only in iOS 17.0 and later. On earlier versions of iOS, this method has no effect.
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     public func scrollClipDisabled(_ disabled: Bool = true) -> some View {
         modifier(ScrollClipDisabledModifier(disabled: disabled))
     }

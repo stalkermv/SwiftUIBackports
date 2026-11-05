@@ -40,6 +40,7 @@ extension View {
     ///   or vertically compact size class.
     @available(iOS, introduced: 15, deprecated: 16.4, message: "Use `View.presentationCompactAdaptation(_:)` instead.")
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 16.4+).")
     @ViewBuilder public func presentationCompactAdaptation(_ adaptation: PresentationAdaptationBackport) -> some View {
         if #available(iOS 16.4, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             self.presentationCompactAdaptation(adaptation.backportValue)

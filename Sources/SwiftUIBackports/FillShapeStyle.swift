@@ -23,11 +23,13 @@ extension ShapeStyle where Self == FillShapeStyle {
     /// input fields, search bars, or buttons on iOS.
     /// Use the quaternary version of this style to fill large areas that
     /// contain complex content, such as an expanded table cell on iOS.
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     @_disfavoredOverload public static var fill: FillShapeStyle {
         FillShapeStyle()
     }
 }
 
+@available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
 public struct FillShapeStyle: ShapeStyleBackport {
     
     public init() {}

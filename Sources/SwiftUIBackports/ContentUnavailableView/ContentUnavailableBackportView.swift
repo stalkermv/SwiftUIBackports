@@ -5,6 +5,7 @@
 import SwiftUI
 
 @available(iOS 15.0, *)
+@available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
 @MainActor public struct ContentUnavailableView<Label, Description, Actions> : View
 where Label : View, Description : View, Actions : View {
     let label: Label

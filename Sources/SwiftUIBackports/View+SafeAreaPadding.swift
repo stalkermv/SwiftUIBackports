@@ -29,6 +29,7 @@ extension View {
     /// view.
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     nonisolated public func safeAreaPadding(_ insets: EdgeInsets) -> some View {
         let modifier = SafeAreaPaddingBackportModifier(insets: insets)
         return self.modifier(modifier)
@@ -56,6 +57,7 @@ extension View {
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
     @_disfavoredOverload
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     nonisolated public func safeAreaPadding(_ edges: Edge.Set = .all, _ length: CGFloat) -> some View {
         let insets = EdgeInsets(
             top: edges.contains(.top) ? length : 0,
@@ -88,6 +90,7 @@ extension View {
     /// view.
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
+    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
     nonisolated public func safeAreaPadding(_ length: CGFloat) -> some View {
         let insets = EdgeInsets(
             top: length,
