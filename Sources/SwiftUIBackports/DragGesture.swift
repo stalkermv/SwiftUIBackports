@@ -18,6 +18,8 @@ struct _DragGesture {
     var allowedDirections: _EventDirections
 }
 
+// DragGesture is not available on tvOS.
+#if !os(tvOS)
 extension DragGesture {
     /// Creates a drag gesture with directional constraints using internal configuration.
     ///
@@ -48,3 +50,4 @@ extension DragGesture {
         self = unsafeBitCast(gesture, to: DragGesture.self)
     }
 }
+#endif

@@ -20,7 +20,7 @@ public struct ScrollVisibilityChangeBackportModifier: ViewModifier {
     }
     
     public func body(content: Content) -> some View {
-        #if canImport(UIKit)
+        #if canImport(UIKit) && !os(watchOS)
         let bounds = UIScreen.main.bounds
         content
             .onGeometryChange(for: Bool.self) { proxy in

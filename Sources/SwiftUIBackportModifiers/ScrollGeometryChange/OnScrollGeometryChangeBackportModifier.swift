@@ -4,7 +4,8 @@
 //
 //  Created by Valeriy Malishevskyi on 01.10.2024.
 //
-#if canImport(UIKit)
+// UIScrollView-based fallback; not available on watchOS.
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 #if USE_SWIFTUI_INTROSPECT
 import SwiftUIIntrospect
@@ -23,7 +24,7 @@ public struct OnScrollGeometryChangeBackportModifier<T: Equatable> : ViewModifie
     }
     
     public func body(content: Content) -> some View {
-        if #available(iOS 18.0, *) {
+        if #available(iOS 18.0, tvOS 18.0, *) {
             content
                 .onScrollGeometryChange(
                     for: type,

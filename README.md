@@ -1,6 +1,6 @@
 # SwiftUIBackports
 
-SwiftUIBackports is a Swift package that brings newer SwiftUI APIs to older iOS versions, enabling developers to use the latest SwiftUI features while maintaining compatibility with earlier iOS releases.
+SwiftUIBackports is a Swift package that brings newer SwiftUI APIs to older OS versions, enabling developers to use the latest SwiftUI features while maintaining compatibility with earlier iOS releases.
 
 ## Features
 - Backported SwiftUI APIs: Utilize modern SwiftUI components on older iOS versions.
@@ -17,7 +17,7 @@ Alternatively, add it directly to your Package.swift:
 
 ```
 dependencies: [
-    .package(url: "https://github.com/stalkermv/SwiftUIBackports.git", from: "1.2.0")
+    .package(url: "https://github.com/stalkermv/SwiftUIBackports.git", from: "2.0.0")
 ]
 ```
 
@@ -32,25 +32,37 @@ import SwiftUIBackports
 Then, use the backported APIs as you would normally. For example:
 
 ```swift
-Text("Video")
-    .onScrollVisibilityChange(threshold: 0.5) { isVisible in
-        isPlaying = isVisible
-    }
+// Example usage of a backported API
 ```
 
 
 ## Compatibility
 
-SwiftUIBackports is compatible with:
-- iOS 16 and later
-- macOS 13 and later
-- Swift 6.1 and later
+| Platform | Minimum |
+|---|---|
+| iOS | 17.0 |
+| macOS | 14.0 |
+| Mac Catalyst | 17.0 |
+| tvOS | 17.0 |
+| watchOS | 10.0 |
 
-## Deprecations in 1.2.0
+Swift 6.1 or later. The optional `useSwiftUIIntrospect` trait enables the SwiftUIIntrospect-based code paths.
 
-2.0 raises the minimum deployment targets to iOS 17 / macOS 14 and removes every backport whose native API is available there. 1.2.0 does not remove anything. It marks those backports as deprecated so you can fix the warnings before upgrading.
+What 2.0 still provides:
 
-| Deprecated in 1.2.0 | Use instead |
+- `onScrollGeometryChange` (native on iOS 18; fallback not available on watchOS)
+- `onScrollVisibilityChange` (native on iOS 18 / macOS 15 / tvOS 18 / watchOS 11)
+- `ForEach(subviews:)` and `Group(subviews:)` (native on iOS 18)
+- `Subview.traitValues`, `tag(for:)`, `hasTag(_:)`, `traitValue(_:_:)`, `ViewTree`
+- `selectionDisabled(_:)` together with `traitValues.selectionDisabled`
+- `tabViewPageClipDisabled(_:)`
+- `DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` (not on tvOS)
+
+## Migrating from 1.x
+
+2.0 drops iOS 16 / macOS 13 and removes every backport whose native API is available at the new minimums. 1.2.0 marks all of them as deprecated, so build against 1.2.0 first and fix the warnings.
+
+| Removed in 2.0 | Use instead |
 |---|---|
 | `onChange(of:initial:_:)` | native `onChange(of:initial:_:)` (iOS 17) |
 | `safeAreaPadding(_:)` | native `safeAreaPadding` (iOS 17) |
@@ -68,9 +80,6 @@ SwiftUIBackports is compatible with:
 | `presentationBackgroundInteraction(_:)`, `PresentationBackgroundInteractionBackport`, `PresentationDetentReference` | native (iOS 16.4) |
 | `presentationCompactAdaptation(_:)`, `PresentationAdaptationBackport` | native (iOS 16.4) |
 | `Text(_:format:)` | native (iOS 15) |
-| `selectionDisabled(_:)`, `traitValues.selectionDisabled` | native `selectionDisabled(_:)` (iOS 17 / macOS 14). The `traitValues.selectionDisabled` accessor and `SelectionDisabledTraitKey` are removed with no replacement |
-
-`onScrollGeometryChange`, `onScrollVisibilityChange`, `ForEach(subviews:)`, `Group(subviews:)`, the trait value APIs, `selectionDisabled(_:)`, `tabViewPageClipDisabled(_:)` and `DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` are not deprecated in 1.2.0.
 
 ## Contributing
 

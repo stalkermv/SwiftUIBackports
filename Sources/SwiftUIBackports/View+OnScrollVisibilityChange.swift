@@ -41,10 +41,10 @@ extension View {
         threshold: Double = 0.5,
         _ action: @escaping (Bool) -> Void
     ) -> some View {
-        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 10.0, *) {
+        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, *) {
             self.onScrollVisibilityChange(threshold: threshold, action)
         } else {
-            #if canImport(UIKit)
+            #if canImport(UIKit) && !os(watchOS)
             self.modifier(
                 ScrollVisibilityChangeBackportModifier(
                     threshold: threshold,
