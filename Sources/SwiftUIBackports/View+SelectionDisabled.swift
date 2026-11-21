@@ -42,20 +42,16 @@ extension View {
     ///
     /// - Parameter isDisabled: A Boolean value that determines whether users can
     ///   select this view.
-    @available(iOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier.")
-    @available(macOS, deprecated: 14.0, message: "Use the native selectionDisabled(_:) modifier.")
-    @available(tvOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier.")
-    @available(watchOS, deprecated: 10.0, message: "Use the native selectionDisabled(_:) modifier.")
+    @available(iOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
+    @available(macOS, deprecated: 14.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
+    @available(tvOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
+    @available(watchOS, deprecated: 10.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
     public func selectionDisabled(_ isDisabled: Bool = true) -> ModifiedContent<Self, SelectionDisabledModifier> {
         modifier(SelectionDisabledModifier(isDisabled: isDisabled))
     }
 }
 
 extension TraitCollectionValues {
-    @available(iOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier.")
-    @available(macOS, deprecated: 14.0, message: "Use the native selectionDisabled(_:) modifier.")
-    @available(tvOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier.")
-    @available(watchOS, deprecated: 10.0, message: "Use the native selectionDisabled(_:) modifier.")
     public var selectionDisabled: Bool {
         return self[SelectionDisabledTraitKey.self]
     }

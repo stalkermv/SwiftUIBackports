@@ -72,10 +72,9 @@ Each deprecation is scoped to the OS version that introduces the native API: iOS
 | `Text(_:format:)` | native (iOS 15) |
 | `ContainerRelativeFrameModifier`, `InvalidatableContentBackportModifier`, `OnChangeBackportModifier`, `PresentationCornerRadiusModifier`, `SafeAreaPaddingBackportModifier`, `ScrollClipDisabledModifier`, `ScrollPositionBackportModifier`, `ScrollTargetLayoutBackportModifier` (`SwiftUIBackportModifiers`) | implementation types of the modifiers above |
 | `DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` | moves to the separate `SwiftUIBackportsUnsafe` product in 2.0. On OS 27 the 1.x implementation no longer applies `allowedDirections` and creates a plain `DragGesture` |
-| `selectionDisabled(_:)`, `SelectionDisabledModifier` | native `selectionDisabled(_:)` (iOS 17 / macOS 14) |
-| `traitValues.selectionDisabled`, `SelectionDisabledTraitKey` | no replacement; removed in 2.0 together with the modifier |
+| `selectionDisabled(_:)`, `SelectionDisabledModifier`, `SelectionDisabledTraitKey` | native `selectionDisabled(_:)` (iOS 17 / macOS 14) |
 
-`onScrollGeometryChange`, `onScrollVisibilityChange`, `ForEach(subviews:)`, `Group(subviews:)`, the trait value APIs (`Subview.traitValues`, `tag(for:)`, `hasTag(_:)`, `traitValue(_:_:)`, `ViewTree`) and `tabViewPageClipDisabled(_:)` are not deprecated in 1.2.0.
+`onScrollGeometryChange`, `onScrollVisibilityChange`, `ForEach(subviews:)`, `Group(subviews:)`, the trait value APIs (`Subview.traitValues`, `traitValues.selectionDisabled`, `tag(for:)`, `hasTag(_:)`, `traitValue(_:_:)`, `ViewTree`) and `tabViewPageClipDisabled(_:)` are not deprecated in 1.2.0. `traitValues.selectionDisabled` keeps working in 2.0, where it reads the native `selectionDisabled(_:)` flag.
 
 ## Contributing
 
