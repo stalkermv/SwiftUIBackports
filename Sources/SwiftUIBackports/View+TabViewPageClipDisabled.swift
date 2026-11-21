@@ -1,6 +1,6 @@
 //
 //  View+TabViewPageClipDisabled.swift
-//  SwiftUIHelpers
+//  SwiftUIBackports
 //
 //  Created by Valeriy Malishevskyi on 06.08.2024.
 //
@@ -13,7 +13,9 @@ extension View {
     /// - Parameter disabled: A Boolean value that indicates whether scroll clipping is disabled.
     /// - Returns: A view that disables the scroll clipping behavior.
     ///
-    /// - Warning: This method is available only in iOS 17.0 and later. On earlier versions of iOS, this method has no effect.
+    /// - Note: Applies to page-style `TabView`s on iOS and to `TabView`s on macOS, and only has an effect when
+    ///   the package is built with the `useSwiftUIIntrospect` trait. Without the trait, or on other platforms,
+    ///   this method has no effect.
     public func tabViewPageClipDisabled(_ disabled: Bool = true) -> some View {
         modifier(TabViewPageClipDisabledModifier(disabled: disabled))
     }

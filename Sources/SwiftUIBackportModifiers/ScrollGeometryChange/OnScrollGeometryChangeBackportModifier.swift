@@ -1,6 +1,6 @@
 //
 //  OnScrollGeometryChangeBackportModifier.swift
-//  SwiftUIHelpers
+//  SwiftUIBackports
 //
 //  Created by Valeriy Malishevskyi on 01.10.2024.
 //
@@ -65,7 +65,7 @@ struct ScrollGeometryProxyWrapper<T>: ViewModifier where T: Equatable {
     func body(content: Content) -> some View {
         #if USE_SWIFTUI_INTROSPECT
         content
-            .introspect(.scrollView, on: .iOS(.v16, .v17)) { scrollView in
+            .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
                 DispatchQueue.main.async {
                     manager.observe(scrollable: scrollView, transform, action)
                 }
@@ -76,20 +76,9 @@ struct ScrollGeometryProxyWrapper<T>: ViewModifier where T: Equatable {
     }
 }
 
-private struct OnChangeModifier<V: Equatable> : ViewModifier {
-    let value: V
-    let action: (V, V) -> Void
-    
-    public func body(content: Content) -> some View {
-        content
-            .onChange(of: value) { [oldValue = value] newValue in
-                action(oldValue, newValue)
-            }
-    }
-}
-
 import Combine
 
+@available(iOS, introduced: 14.0, deprecated: 18.0)
 @MainActor private final class ObservationManager<T: Equatable> {
 
     private(set) var geometry = ScrollGeometry() {
@@ -115,6 +104,8 @@ import Combine
     
     private var transform: ((ScrollGeometry) -> T)?
     private var action: ((_ oldValue: T, _ newValue: T) -> Void)?
+    
+    nonisolated init() {}
     
     func observe(
         scrollable: UIScrollView,

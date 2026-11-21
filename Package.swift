@@ -1,13 +1,14 @@
 // swift-tools-version: 6.1
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
+// SwiftUIIntrospect does not build for watchOS, so the trait has no effect there.
+let introspectPlatforms: [Platform] = [.iOS, .macOS, .macCatalyst, .tvOS, .visionOS]
+
 let package = Package(
     name: "SwiftUIBackports",
-    platforms: [.iOS(.v17), .macOS(.v14), .macCatalyst(.v17), .tvOS(.v17), .watchOS(.v10)],
+    platforms: [.iOS(.v17), .macOS(.v14), .macCatalyst(.v17), .tvOS(.v17), .watchOS(.v10), .visionOS(.v2)],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(name: "SwiftUIBackports", targets: ["SwiftUIBackports"]),
         // Helpers that link against non-public SwiftUI symbols. Kept out of the main product
         // so they are only linked into apps that import them, and not covered by semver.
@@ -20,8 +21,6 @@ let package = Package(
         .package(url: "https://github.com/siteline/swiftui-introspect", from: "26.0.0")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "SwiftUIBackports",
             dependencies: [
@@ -29,11 +28,11 @@ let package = Package(
                 .product(
                     name: "SwiftUIIntrospect",
                     package: "swiftui-introspect",
-                    condition: .when(traits: ["useSwiftUIIntrospect"])
+                    condition: .when(platforms: introspectPlatforms, traits: ["useSwiftUIIntrospect"])
                 )
             ],
             swiftSettings: [
-                .define("USE_SWIFTUI_INTROSPECT", .when(traits: ["useSwiftUIIntrospect"]))
+                .define("USE_SWIFTUI_INTROSPECT", .when(platforms: introspectPlatforms, traits: ["useSwiftUIIntrospect"]))
             ]
         ),
         .target(
@@ -42,11 +41,11 @@ let package = Package(
                 .product(
                     name: "SwiftUIIntrospect",
                     package: "swiftui-introspect",
-                    condition: .when(traits: ["useSwiftUIIntrospect"])
+                    condition: .when(platforms: introspectPlatforms, traits: ["useSwiftUIIntrospect"])
                 )
             ],
             swiftSettings: [
-                .define("USE_SWIFTUI_INTROSPECT", .when(traits: ["useSwiftUIIntrospect"]))
+                .define("USE_SWIFTUI_INTROSPECT", .when(platforms: introspectPlatforms, traits: ["useSwiftUIIntrospect"]))
             ]
         ),
         .target(name: "SwiftUIBackportsUnsafe"),

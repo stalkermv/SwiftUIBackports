@@ -33,7 +33,7 @@ extension Subview {
     ///
     /// Create custom trait values by defining a key
     /// that conforms to the ``TraitValueKey`` protocol, and then using that
-    /// key with the subscript operator of the ``ContainerValues`` structure
+    /// key with the subscript operator of the ``TraitCollectionValues`` structure
     /// to get and set a value for that key:
     ///
     /// ```
@@ -50,7 +50,7 @@ extension Subview {
     /// ```
     ///
     /// You use custom trait values the same way you use system-provided
-    /// values, setting a value with the ``View/traitValue(_:_:)`` view
+    /// values, setting a value with the `traitValue(_:_:)` view
     /// modifier, and reading values from a ``Subview`` provided by the
     /// `subviews` modifier. You can also provide a dedicated view modifier as a
     /// convenience for setting the value:
@@ -69,7 +69,7 @@ extension Subview {
 
     /// The tag value for the given type if the container values contains one.
     ///
-    /// Tag values are set using the ``View/tag`` modifier.
+    /// Tag values are set using the `tag(_:)` modifier.
     ///
     /// - Parameter type: The type to get the tag value for.
     /// - Returns: The tag value for the given type if the subview has one,
@@ -110,7 +110,7 @@ extension Subview {
     /// Returns true if the container values contain a tag matching a given
     /// value.
     ///
-    /// Tag values are set using the ``View/tag`` modifier.
+    /// Tag values are set using the `tag(_:)` modifier.
     ///
     /// - Parameter tag: The tag value to check for.
     /// - Returns: If the container values has a tag matching the given value.
@@ -130,7 +130,7 @@ extension View {
     /// above the view they're set on. However, unlike preferences, trait values
     /// do not have merging behavior and do not escape their closest container. In
     /// the following example, the trait value is set on the contained view, but
-    /// is dropped when it reaches the containing ``VStack``.
+    /// is dropped when it reaches the containing `VStack`.
     ///
     /// ```
     /// VStack {
