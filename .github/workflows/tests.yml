@@ -41,4 +41,23 @@ jobs:
       run: sudo xcode-select -s /Applications/Xcode_16.3.app
     - uses: actions/checkout@v4
     - name: Build ${{ matrix.scheme }} for ${{ matrix.destination }}
-      run: xcodebuild build -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}"
+      env:
+        SCHEME: ${{ matrix.scheme }}
+        DESTINATION: ${{ matrix.destination }}
+      run: |
+        log="${RUNNER_TEMP:-/tmp}/build.log"
+        build() {
+          xcodebuild build -scheme "$SCHEME" -destination "$DESTINATION" CODE_SIGNING_ALLOWED=NO 2>&1 | tee "$log"
+          return "${PIPESTATUS[0]}"
+        }
+        if ! build; then
+          # Some runners come without the device platform that Xcode needs for a
+          # generic destination. Install it and retry; fail on any other error.
+          platform="${DESTINATION#generic/platform=}"
+          if grep -q "is not installed" "$log"; then
+            xcodebuild -downloadPlatform "$platform"
+            build
+          else
+            exit 1
+          fi
+        fi
