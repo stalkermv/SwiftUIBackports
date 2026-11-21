@@ -9,6 +9,9 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(name: "SwiftUIBackports", targets: ["SwiftUIBackports"]),
+        // Helpers that link against non-public SwiftUI symbols. Kept out of the main product
+        // so they are only linked into apps that import them, and not covered by semver.
+        .library(name: "SwiftUIBackportsUnsafe", targets: ["SwiftUIBackportsUnsafe"]),
     ],
     traits: [
         .trait(name: "useSwiftUIIntrospect")
@@ -46,9 +49,14 @@ let package = Package(
                 .define("USE_SWIFTUI_INTROSPECT", .when(traits: ["useSwiftUIIntrospect"]))
             ]
         ),
+        .target(name: "SwiftUIBackportsUnsafe"),
         .testTarget(
             name: "SwiftUIBackportsTests",
             dependencies: ["SwiftUIBackports"]
+        ),
+        .testTarget(
+            name: "SwiftUIBackportsUnsafeTests",
+            dependencies: ["SwiftUIBackportsUnsafe"]
         ),
     ]
 )
