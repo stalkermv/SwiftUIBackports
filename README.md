@@ -138,6 +138,19 @@ BadgeList {
 }
 ```
 
+### Reading selectionDisabled in custom containers
+
+`traitValues.selectionDisabled` tells a custom container whether a child has the native `selectionDisabled(_:)` modifier, like `Picker` and `List` do.
+
+```swift
+ForEach(subviews: content) { subview in
+    Button { select(subview) } label: { subview }
+        .disabled(subview.traitValues.selectionDisabled)
+}
+```
+
+SwiftUI does not expose this flag, so the package reads a private SwiftUI trait by reflection. If a future OS renames it, the value is `false`; the tests of this package check it on every supported OS. It only sees the modifier on the child itself (also on a `Group`, but not on a stack around the child).
+
 ### tabViewPageClipDisabled
 
 Requires the `useSwiftUIIntrospect` trait; applies to iOS and macOS. On other platforms, including tvOS and visionOS, the view is returned unchanged.
@@ -197,7 +210,8 @@ What 2.0 still provides:
 | `presentationBackgroundInteraction(_:)`, `PresentationBackgroundInteractionBackport`, `PresentationDetentReference` | native (iOS 16.4) |
 | `presentationCompactAdaptation(_:)`, `PresentationAdaptationBackport` | native (iOS 16.4) |
 | `Text(_:format:)` | native (iOS 15) |
-| `selectionDisabled(_:)`, `traitValues.selectionDisabled` | native `selectionDisabled(_:)` (iOS 17 / macOS 14). The `traitValues.selectionDisabled` accessor and `SelectionDisabledTraitKey` are removed with no replacement |
+| `selectionDisabled(_:)`, `SelectionDisabledModifier`, `SelectionDisabledTraitKey` | native `selectionDisabled(_:)` (iOS 17 / macOS 14) |
+| `traitValues.selectionDisabled` | still available, now reads the flag of the native `selectionDisabled(_:)` (see above) |
 | `DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` | moved to the separate `SwiftUIBackportsUnsafe` product (not a backport of a public API) |
 
 ### Migrating `DragGesture(allowedDirections:)`
