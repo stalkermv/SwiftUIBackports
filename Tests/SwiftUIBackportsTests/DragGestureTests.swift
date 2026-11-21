@@ -37,7 +37,10 @@ import SwiftUI
 
         #expect(_DragGesture.canBridge(nativeSize: size, nativeAlignment: alignment))
         #expect(!_DragGesture.canBridge(nativeSize: size + 9, nativeAlignment: alignment))
+        // Same size, different alignment
         #expect(!_DragGesture.canBridge(nativeSize: size, nativeAlignment: alignment * 2))
+        // Same alignment, different size
+        #expect(!_DragGesture.canBridge(nativeSize: size - 1, nativeAlignment: alignment))
     }
 
     @Test("Falls back to the public initializer when the layout differs")
@@ -52,6 +55,9 @@ import SwiftUI
         let gesture = DragGesture(minimumDistance: 5, allowedDirections: .vertical)
 
         #expect(gesture.minimumDistance == 5)
-        #expect(bridges == (MemoryLayout<_DragGesture>.size == MemoryLayout<DragGesture>.size))
+        #expect(bridges == (
+            MemoryLayout<_DragGesture>.size == MemoryLayout<DragGesture>.size
+                && MemoryLayout<_DragGesture>.alignment == MemoryLayout<DragGesture>.alignment
+        ))
     }
 }
