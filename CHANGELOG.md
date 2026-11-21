@@ -23,6 +23,8 @@ All notable changes to this project are documented in this file.
 - `onScrollVisibilityChange` and `onScrollGeometryChange` build on visionOS and use the native modifiers there.
 - Enabling the `useSwiftUIIntrospect` trait no longer breaks watchOS builds; the trait is ignored on platforms SwiftUIIntrospect does not support.
 - `tabViewPageClipDisabled` no longer lists iOS 16 and macOS 13 and earlier in its SwiftUIIntrospect support list.
+- With the `useSwiftUIIntrospect` trait enabled, `tabViewPageClipDisabled` returned an empty view on tvOS and visionOS because its body had no branch for those platforms. It now returns the content unchanged there.
+- The `onScrollGeometryChange` fallback used an iOS-only SwiftUIIntrospect predicate on every UIKit platform, so it never matched on tvOS. It now uses `.tvOS(.v17)` on tvOS (and `.visionOS(.v2)` on visionOS) and `.iOS(.v17)` on iOS and Mac Catalyst.
 
 ## 1.2.0 (Unreleased)
 

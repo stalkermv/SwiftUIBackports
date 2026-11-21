@@ -34,7 +34,7 @@ The backports use the same names as the native APIs. On OS versions that ship th
 
 ### Optional: SwiftUIIntrospect
 
-The `onScrollGeometryChange` fallback on iOS 17 and `tabViewPageClipDisabled` need to reach into UIKit/AppKit views. They do this through [swiftui-introspect](https://github.com/siteline/swiftui-introspect), which is only linked when you enable the `useSwiftUIIntrospect` trait. Without the trait both still compile, but the iOS 17 `onScrollGeometryChange` fallback and `tabViewPageClipDisabled` have no effect. The trait has no effect on watchOS, where SwiftUIIntrospect is not available.
+The `onScrollGeometryChange` fallback on iOS 17 / tvOS 17 and `tabViewPageClipDisabled` need to reach into UIKit/AppKit views. They do this through [swiftui-introspect](https://github.com/siteline/swiftui-introspect), which is only linked when you enable the `useSwiftUIIntrospect` trait. Without the trait both still compile, but the iOS 17 / tvOS 17 `onScrollGeometryChange` fallback and `tabViewPageClipDisabled` have no effect. The trait has no effect on watchOS, where SwiftUIIntrospect is not available.
 
 ```swift
 .package(
@@ -140,7 +140,7 @@ BadgeList {
 
 ### tabViewPageClipDisabled
 
-Requires the `useSwiftUIIntrospect` trait; applies to iOS and macOS.
+Requires the `useSwiftUIIntrospect` trait; applies to iOS and macOS. On other platforms, including tvOS and visionOS, the view is returned unchanged.
 
 ```swift
 TabView {
