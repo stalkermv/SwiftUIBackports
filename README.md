@@ -68,9 +68,10 @@ SwiftUIBackports is compatible with:
 | `presentationBackgroundInteraction(_:)`, `PresentationBackgroundInteractionBackport`, `PresentationDetentReference` | native (iOS 16.4) |
 | `presentationCompactAdaptation(_:)`, `PresentationAdaptationBackport` | native (iOS 16.4) |
 | `Text(_:format:)` | native (iOS 15) |
+| `DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` | moves to the separate `SwiftUIBackportsUnsafe` product in 2.0. On OS 27 the 1.x implementation no longer applies `allowedDirections` and creates a plain `DragGesture` |
 | `selectionDisabled(_:)`, `traitValues.selectionDisabled` | native `selectionDisabled(_:)` (iOS 17 / macOS 14). The `traitValues.selectionDisabled` accessor and `SelectionDisabledTraitKey` are removed with no replacement |
 
-`onScrollGeometryChange`, `onScrollVisibilityChange`, `ForEach(subviews:)`, `Group(subviews:)`, the trait value APIs, `selectionDisabled(_:)`, `tabViewPageClipDisabled(_:)` and `DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` are not deprecated in 1.2.0.
+`onScrollGeometryChange`, `onScrollVisibilityChange`, `ForEach(subviews:)`, `Group(subviews:)`, the trait value APIs, `selectionDisabled(_:)` and `tabViewPageClipDisabled(_:)` are not deprecated in 1.2.0.
 
 ## Contributing
 
