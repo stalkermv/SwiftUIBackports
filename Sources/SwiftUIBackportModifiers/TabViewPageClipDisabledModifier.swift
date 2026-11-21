@@ -18,8 +18,7 @@ public struct TabViewPageClipDisabledModifier: ViewModifier {
     }
     
     public func body(content: Content) -> some View {
-        #if USE_SWIFTUI_INTROSPECT
-        #if os(iOS)
+        #if USE_SWIFTUI_INTROSPECT && os(iOS)
         content
             .introspect(
                 .tabView(style: .page),
@@ -29,12 +28,13 @@ public struct TabViewPageClipDisabledModifier: ViewModifier {
             ) { scrollView in
             scrollView.clipsToBounds = !isDisabled
         }
-        #elseif os(macOS)
+        #elseif USE_SWIFTUI_INTROSPECT && os(macOS)
         content.introspect(.tabView, on: .macOS(.v14, .v15)) { tabView in
             tabView.clipsToBounds = !isDisabled
         }
-        #endif
         #else
+        // Without the SwiftUIIntrospect trait, and on platforms other than iOS and macOS
+        // (tvOS, visionOS, watchOS), the content is returned unchanged.
         content
         #endif
     }

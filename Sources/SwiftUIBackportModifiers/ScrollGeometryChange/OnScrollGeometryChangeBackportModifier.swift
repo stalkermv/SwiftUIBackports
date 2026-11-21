@@ -64,16 +64,26 @@ struct ScrollGeometryProxyWrapper<T>: ViewModifier where T: Equatable {
 
     func body(content: Content) -> some View {
         #if USE_SWIFTUI_INTROSPECT
-        content
-            .introspect(.scrollView, on: .iOS(.v17)) { scrollView in
-                DispatchQueue.main.async {
-                    manager.observe(scrollable: scrollView, transform, action)
-                }
-            }
+        #if os(tvOS)
+        content.introspect(.scrollView, on: .tvOS(.v17), customize: observe)
+        #elseif os(visionOS)
+        content.introspect(.scrollView, on: .visionOS(.v2), customize: observe)
+        #else
+        // iOS and Mac Catalyst
+        content.introspect(.scrollView, on: .iOS(.v17), customize: observe)
+        #endif
         #else
         content
         #endif
     }
+
+    #if USE_SWIFTUI_INTROSPECT
+    private func observe(_ scrollView: UIScrollView) {
+        DispatchQueue.main.async {
+            manager.observe(scrollable: scrollView, transform, action)
+        }
+    }
+    #endif
 }
 
 import Combine
