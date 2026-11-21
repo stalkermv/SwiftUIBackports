@@ -1,17 +1,15 @@
-# This workflow will build a Swift project
+# This workflow will build and test the Swift package
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
 name: Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/**" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
-  build:
-
+  test:
     runs-on: macos-15
 
     steps:
@@ -22,3 +20,25 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: swift test -v
+    - name: Run tests with SwiftUIIntrospect
+      run: swift test -v --traits useSwiftUIIntrospect
+
+  build:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        scheme: [ SwiftUIBackports, SwiftUIBackportsUnsafe ]
+        destination:
+          - generic/platform=iOS
+          - generic/platform=macOS,variant=Mac Catalyst
+          - generic/platform=tvOS
+          - generic/platform=watchOS
+          - generic/platform=visionOS
+
+    steps:
+    - name: Select Xcode 16.3
+      run: sudo xcode-select -s /Applications/Xcode_16.3.app
+    - uses: actions/checkout@v4
+    - name: Build ${{ matrix.scheme }} for ${{ matrix.destination }}
+      run: xcodebuild build -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}"
