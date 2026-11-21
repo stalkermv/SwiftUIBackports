@@ -26,15 +26,133 @@ dependencies: [
 Import SwiftUIBackports in your SwiftUI files:
 
 ```swift
+import SwiftUI
 import SwiftUIBackports
 ```
 
-Then, use the backported APIs as you would normally. For example:
+The backports use the same names as the native APIs. On OS versions that ship the native API the native one is used; elsewhere the backport takes over.
+
+### Optional: SwiftUIIntrospect
+
+The `onScrollGeometryChange` fallback on iOS 17 and `tabViewPageClipDisabled` need to reach into UIKit/AppKit views. They do this through [swiftui-introspect](https://github.com/siteline/swiftui-introspect), which is only linked when you enable the `useSwiftUIIntrospect` trait. Without the trait both still compile, but the iOS 17 `onScrollGeometryChange` fallback and `tabViewPageClipDisabled` have no effect. The trait has no effect on watchOS, where SwiftUIIntrospect is not available.
 
 ```swift
-// Example usage of a backported API
+.package(
+    url: "https://github.com/stalkermv/SwiftUIBackports.git",
+    from: "2.0.0",
+    traits: ["useSwiftUIIntrospect"]
+)
 ```
 
+### onScrollGeometryChange
+
+Available on iOS, Mac Catalyst, tvOS and visionOS (not macOS or watchOS). Native on iOS 18 / tvOS 18 / visionOS 2.
+
+```swift
+struct HeaderExample: View {
+    @State private var isScrolled = false
+
+    var body: some View {
+        ScrollView {
+            // ...
+        }
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y > geometry.contentInsets.top
+        } action: { _, isScrolled in
+            self.isScrolled = isScrolled
+        }
+    }
+}
+```
+
+### onScrollVisibilityChange
+
+Native on iOS 18 / macOS 15 / tvOS 18 / watchOS 11 / visionOS 2. The fallback runs on iOS, Mac Catalyst and tvOS; on macOS 14 and watchOS 10 it does nothing.
+
+```swift
+Text("Video")
+    .onScrollVisibilityChange(threshold: 0.5) { isVisible in
+        isPlaying = isVisible
+    }
+```
+
+### ForEach(subviews:) and Group(subviews:)
+
+```swift
+struct Card<Content: View>: View {
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        VStack {
+            ForEach(subviews: content) { subview in
+                subview.padding()
+            }
+        }
+    }
+}
+
+struct Summary<Content: View>: View {
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        Group(subviews: content) { subviews in
+            Text("\(subviews.count) items")
+            subviews.first
+        }
+    }
+}
+```
+
+### Trait values, tags and ViewTree
+
+`Subview.traitValues` reads the trait values and tag of a subview. `traitValue(_:_:)` sets a custom trait, and `ViewTree` exposes the children of a view directly.
+
+```swift
+struct BadgeKey: TraitValueKey {
+    static let defaultValue = 0
+}
+
+extension TraitCollectionValues {
+    var badge: Int { self[BadgeKey.self] }
+}
+
+struct BadgeList<Content: View>: View {
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        ViewTree(content) { children in
+            ForEach(children) { child in
+                HStack {
+                    child
+                    Text("\(child.traitValues.badge)")
+                    if child.traitValues.hasTag("selected") { Text("✓") }
+                }
+            }
+        }
+    }
+}
+
+BadgeList {
+    Text("Inbox").traitValue(BadgeKey.self, 3).tag("selected")
+    Text("Sent")
+}
+```
+
+### tabViewPageClipDisabled
+
+Requires the `useSwiftUIIntrospect` trait; applies to iOS and macOS.
+
+```swift
+TabView {
+    Text("One")
+    Text("Two")
+}
+.tabViewPageClipDisabled()
+```
+
+### DragGesture(allowedDirections:)
+
+Lives in the separate `SwiftUIBackportsUnsafe` product; see [Migrating `DragGesture(allowedDirections:)`](#migrating-draggestureallowedirections).
 
 ## Compatibility
 
@@ -45,18 +163,17 @@ Then, use the backported APIs as you would normally. For example:
 | Mac Catalyst | 17.0 |
 | tvOS | 17.0 |
 | watchOS | 10.0 |
+| visionOS | 2.0 |
 
 Swift 6.1 or later. The optional `useSwiftUIIntrospect` trait enables the SwiftUIIntrospect-based code paths.
 
 What 2.0 still provides:
 
-- `onScrollGeometryChange` (native on iOS 18; fallback not available on watchOS)
-- `onScrollVisibilityChange` (native on iOS 18 / macOS 15 / tvOS 18 / watchOS 11)
+- `onScrollGeometryChange` (native on iOS 18 / tvOS 18 / visionOS 2; fallback not available on watchOS)
+- `onScrollVisibilityChange` (native on iOS 18 / macOS 15 / tvOS 18 / watchOS 11 / visionOS 2)
 - `ForEach(subviews:)` and `Group(subviews:)` (native on iOS 18)
 - `Subview.traitValues`, `tag(for:)`, `hasTag(_:)`, `traitValue(_:_:)`, `ViewTree`
-- `selectionDisabled(_:)` together with `traitValues.selectionDisabled`
 - `tabViewPageClipDisabled(_:)`
-- `DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` (not on tvOS)
 
 ## Migrating from 1.x
 
@@ -80,6 +197,24 @@ What 2.0 still provides:
 | `presentationBackgroundInteraction(_:)`, `PresentationBackgroundInteractionBackport`, `PresentationDetentReference` | native (iOS 16.4) |
 | `presentationCompactAdaptation(_:)`, `PresentationAdaptationBackport` | native (iOS 16.4) |
 | `Text(_:format:)` | native (iOS 15) |
+| `selectionDisabled(_:)`, `traitValues.selectionDisabled` | native `selectionDisabled(_:)` (iOS 17 / macOS 14). The `traitValues.selectionDisabled` accessor and `SelectionDisabledTraitKey` are removed with no replacement |
+| `DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` | moved to the separate `SwiftUIBackportsUnsafe` product (not a backport of a public API) |
+
+### Migrating `DragGesture(allowedDirections:)`
+
+`DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` wraps a non-public SwiftUI initializer rather than backporting a public OS API. Its previous `unsafeBitCast` implementation trapped on OS 27 (`SwiftUI.DragGesture` grew from 50 to 59 bytes). In 2.0 it lives in the separate `SwiftUIBackportsUnsafe` product, which now calls SwiftUI's own initializer, so it no longer depends on the layout of `DragGesture`. It is available on iOS, macOS, Mac Catalyst, watchOS and visionOS, and unavailable on tvOS, where `DragGesture` itself does not exist.
+
+```swift
+// Package.swift
+.product(name: "SwiftUIBackportsUnsafe", package: "SwiftUIBackports")
+
+// Source
+import SwiftUIBackportsUnsafe
+
+let swipe = DragGesture(minimumDistance: 10, coordinateSpace: .local, allowedDirections: .horizontal)
+```
+
+> **Experimental.** `SwiftUIBackportsUnsafe` links against a non-public SwiftUI symbol. It can break on any OS update, is not covered by semantic versioning, and is kept out of the main product so that apps which do not import it never link that symbol.
 
 ## Contributing
 
