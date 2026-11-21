@@ -39,7 +39,9 @@ public extension View {
     @available(iOS, introduced: 15, deprecated: 16.4)
     @backDeployed(before: iOS 16)
     @_disfavoredOverload
-    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 16.4+).")
+    @available(macOS, deprecated: 13.3, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 16.4, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 9.4, message: "Use the native SwiftUI API.")
     func presentationBackgroundInteraction(_ interaction: PresentationBackgroundInteractionBackport) ->
     ModifiedContent<Self, PresentationBackgroundInteractionModifier> {
         modifier(PresentationBackgroundInteractionModifier(interaction: interaction))

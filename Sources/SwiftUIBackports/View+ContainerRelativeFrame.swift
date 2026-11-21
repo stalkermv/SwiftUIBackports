@@ -93,7 +93,9 @@ extension View {
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
     @_disfavoredOverload
-    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
+    @available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
     public func containerRelativeFrame(_ axes: Axis.Set, alignment: Alignment = .center) -> some View {
         if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             return self.containerRelativeFrame(axes, alignment: alignment)
@@ -190,7 +192,9 @@ extension View {
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
     @_disfavoredOverload
-    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
+    @available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
     public func containerRelativeFrame(
         _ axes: Axis.Set,
         count: Int,
@@ -307,7 +311,9 @@ extension View {
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @available(iOS, deprecated: 17, message: "Use native SwiftUI API instead")
     @_disfavoredOverload
-    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
+    @available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
     public func containerRelativeFrame(
         _ axes: Axis.Set,
         alignment: Alignment = .center,

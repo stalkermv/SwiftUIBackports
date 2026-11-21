@@ -57,7 +57,10 @@ extension View {
     /// view in that layout will be considered for alignment.
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
     @_disfavoredOverload
-    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
+    @available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
     nonisolated public func scrollTargetBehavior(_ behavior: ScrollTargetBehaviorBackport) -> some View {
         if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             let view = self.scrollTargetBehavior(behavior.backportValue)
@@ -68,6 +71,10 @@ extension View {
     }
 }
 
+@available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
 public enum ScrollTargetBehaviorBackport {
     case paging
     case viewAligned(limitBehavior: LimitBehavior = .automatic)
@@ -83,6 +90,10 @@ public enum ScrollTargetBehaviorBackport {
     }
 }
 
+@available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
 public struct LimitBehavior {
     
     enum _Behavior {

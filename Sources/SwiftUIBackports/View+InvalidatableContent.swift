@@ -27,7 +27,9 @@ extension View {
     @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
     @available(iOS, deprecated: 17.0)
     @_disfavoredOverload
-    @available(*, deprecated, message: "Use the native SwiftUI API (iOS 17+).")
+    @available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
     public func invalidatableContent(_ invalidatable: Bool = true) -> some View {
         if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             return self.invalidatableContent(invalidatable)
@@ -39,6 +41,10 @@ extension View {
 }
 
 extension RedactionReasons {
+    @available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
     public static var invalidated: RedactionReasons {
         RedactionReasons(rawValue: 4)
     }

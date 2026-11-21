@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+@available(iOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier.")
+@available(macOS, deprecated: 14.0, message: "Use the native selectionDisabled(_:) modifier.")
+@available(tvOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier.")
+@available(watchOS, deprecated: 10.0, message: "Use the native selectionDisabled(_:) modifier.")
 public struct SelectionDisabledModifier: ViewModifier {
     private var isDisabled: Bool
     
@@ -25,6 +29,10 @@ public struct SelectionDisabledModifier: ViewModifier {
     }
 }
 
+@available(iOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier.")
+@available(macOS, deprecated: 14.0, message: "Use the native selectionDisabled(_:) modifier.")
+@available(tvOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier.")
+@available(watchOS, deprecated: 10.0, message: "Use the native selectionDisabled(_:) modifier.")
 public struct SelectionDisabledTraitKey: _ViewTraitKey {
     public static let defaultValue: Bool = false
 }
