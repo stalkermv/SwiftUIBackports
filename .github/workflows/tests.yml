@@ -37,6 +37,17 @@ jobs:
         simulator() {
           xcrun simctl list devices available iPhone | grep -Eo '[0-9A-F]{8}(-[0-9A-F]{4}){3}-[0-9A-F]{12}' | tail -1
         }
+        # Installing a platform downloads it from Apple and fails now and then on a network
+        # error, so try up to three times with a pause in between.
+        download_platform() {
+          for pause in 0 15 45; do
+            sleep "$pause"
+            if xcodebuild -downloadPlatform "$1"; then
+              return 0
+            fi
+          done
+          return 1
+        }
         run_tests() {
           udid="$(simulator)"
           if [ -z "$udid" ]; then
@@ -50,7 +61,7 @@ jobs:
           # Some runners come without the iOS platform. Install it and retry;
           # fail on any other error.
           if grep -qE "is not installed|No iOS simulator available" "$log"; then
-            xcodebuild -downloadPlatform iOS
+            download_platform iOS
             run_tests
           else
             exit 1
@@ -80,6 +91,17 @@ jobs:
         DESTINATION: ${{ matrix.destination }}
       run: |
         log="${RUNNER_TEMP:-/tmp}/build.log"
+        # Installing a platform downloads it from Apple and fails now and then on a network
+        # error, so try up to three times with a pause in between.
+        download_platform() {
+          for pause in 0 15 45; do
+            sleep "$pause"
+            if xcodebuild -downloadPlatform "$1"; then
+              return 0
+            fi
+          done
+          return 1
+        }
         build() {
           xcodebuild build -scheme "$SCHEME" -destination "$DESTINATION" CODE_SIGNING_ALLOWED=NO 2>&1 | tee "$log"
           return "${PIPESTATUS[0]}"
@@ -89,7 +111,7 @@ jobs:
           # generic destination. Install it and retry; fail on any other error.
           platform="${DESTINATION#generic/platform=}"
           if grep -q "is not installed" "$log"; then
-            xcodebuild -downloadPlatform "$platform"
+            download_platform "$platform"
             build
           else
             exit 1

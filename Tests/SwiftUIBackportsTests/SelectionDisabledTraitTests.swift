@@ -23,6 +23,39 @@ struct SelectionDisabledTraitTests {
         subviews(content: content).map { $0.traitValues.selectionDisabled }
     }
 
+    /// Prints the structure of the trait storage of a subview, so that the logs of a failing OS
+    /// show what SwiftUI stores there.
+    private func describeTraitStorage(_ label: String, _ subview: SwiftUIBackports.Subview) {
+        func line(_ text: String) { print("TRAITDUMP [\(label)] \(text)") }
+        let storage = Mirror(reflecting: subview).descendant("traits", "storage")
+        line("OS \(ProcessInfo.processInfo.operatingSystemVersionString)")
+        line("subview children: \(Mirror(reflecting: subview).children.map { "\($0.label ?? "_"): \(type(of: $0.value))" })")
+        line("storage type: \(storage.map { String(reflecting: type(of: $0)) } ?? "nil")")
+        let entries = storage as? [Any] ?? []
+        line("entries: \(entries.count)")
+        for (index, entry) in entries.enumerated() {
+            line("entry \(index) type: \(String(reflecting: type(of: entry)))")
+            for child in Mirror(reflecting: entry).children {
+                line("entry \(index) child label=\(child.label ?? "nil") type=\(String(reflecting: type(of: child.value))) reflecting=\(String(reflecting: child.value)) describing=\(String(describing: child.value))")
+                for grandchild in Mirror(reflecting: child.value).children {
+                    line("entry \(index)   .\(child.label ?? "_").\(grandchild.label ?? "_") type=\(String(reflecting: type(of: grandchild.value))) value=\(String(describing: grandchild.value))")
+                }
+            }
+        }
+    }
+
+    @Test("Diagnostics: print the trait storage of a plain child and of a child with selectionDisabled(true)")
+    func dumpTraitStorage() {
+        for (label, children) in [
+            ("plain", subviews { Text("a") }),
+            ("selectionDisabled(true)", subviews { Text("a").selectionDisabled(true) }),
+            ("selectionDisabled(false)", subviews { Text("a").selectionDisabled(false) }),
+            ("tag(1)", subviews { Text("a").tag(1) }),
+        ] {
+            for child in children { describeTraitStorage(label, child) }
+        }
+    }
+
     @Test("The native modifier writes the private trait this reader looks for")
     func nativeTraitIsPresent() {
         let children = subviews { Text("a").selectionDisabled(true) }
