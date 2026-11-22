@@ -23,49 +23,34 @@ struct SelectionDisabledTraitTests {
         subviews(content: content).map { $0.traitValues.selectionDisabled }
     }
 
-    /// Prints the structure of the trait storage of a subview, so that the logs of a failing OS
-    /// show what SwiftUI stores there.
-    private func describeTraitStorage(_ label: String, _ subview: SwiftUIBackports.Subview) {
-        func line(_ text: String) { print("TRAITDUMP [\(label)] \(text)") }
-        let storage = Mirror(reflecting: subview).descendant("traits", "storage")
-        line("OS \(ProcessInfo.processInfo.operatingSystemVersionString)")
-        line("subview children: \(Mirror(reflecting: subview).children.map { "\($0.label ?? "_"): \(type(of: $0.value))" })")
-        line("storage type: \(storage.map { String(reflecting: type(of: $0)) } ?? "nil")")
-        let entries = storage as? [Any] ?? []
-        line("entries: \(entries.count)")
-        for (index, entry) in entries.enumerated() {
-            line("entry \(index) type: \(String(reflecting: type(of: entry)))")
-            for child in Mirror(reflecting: entry).children {
-                line("entry \(index) child label=\(child.label ?? "nil") type=\(String(reflecting: type(of: child.value))) reflecting=\(String(reflecting: child.value)) describing=\(String(describing: child.value))")
-                for grandchild in Mirror(reflecting: child.value).children {
-                    line("entry \(index)   .\(child.label ?? "_").\(grandchild.label ?? "_") type=\(String(reflecting: type(of: grandchild.value))) value=\(String(describing: grandchild.value))")
-                }
-            }
-        }
-    }
-
-    @Test("Diagnostics: print the trait storage of a plain child and of a child with selectionDisabled(true)")
-    func dumpTraitStorage() {
-        for (label, children) in [
-            ("plain", subviews { Text("a") }),
-            ("selectionDisabled(true)", subviews { Text("a").selectionDisabled(true) }),
-            ("selectionDisabled(false)", subviews { Text("a").selectionDisabled(false) }),
-            ("tag(1)", subviews { Text("a").tag(1) }),
-        ] {
-            for child in children { describeTraitStorage(label, child) }
-        }
-    }
-
     @Test("The native modifier writes the private trait this reader looks for")
     func nativeTraitIsPresent() {
         let children = subviews { Text("a").selectionDisabled(true) }
         #expect(children.count == 1)
-        let hasTrait = children.first?.traitValues.values.contains { entry in
-            Mirror(reflecting: entry).children.contains {
-                $0.label == "key" && String(reflecting: $0.value).contains("IsSelectionEnabledTraitKey")
-            }
-        }
-        #expect(hasTrait == true, Comment(rawValue: Self.canary))
+        let entries = children.first?.traitValues.values ?? []
+        let hasTrait = entries.contains { TraitCollectionValues.selectionEnabled(in: $0) != nil }
+        let found = entries.map { String(reflecting: type(of: $0)) }
+        #expect(hasTrait, Comment(rawValue: "\(Self.canary). Trait entries found: \(found)"))
+    }
+
+    // Entries shaped like the two layouts SwiftUI uses, to cover both without needing that OS.
+    private struct IsSelectionEnabledTraitKey {}
+    private struct OtherTraitKey {}
+    private struct GenericEntry<Key> { var value: Bool }        // macOS 15, iOS 26: AnyTrait<Key>
+    private struct KeyedEntry { var key: Any.Type; var value: Bool }   // macOS 27, iOS 27: Entry(key:value:)
+
+    @Test("The reader understands both trait entry layouts")
+    func readsBothEntryLayouts() {
+        #expect(TraitCollectionValues.selectionEnabled(in: GenericEntry<IsSelectionEnabledTraitKey>(value: false)) == false)
+        #expect(TraitCollectionValues.selectionEnabled(in: GenericEntry<IsSelectionEnabledTraitKey>(value: true)) == true)
+        #expect(TraitCollectionValues.selectionEnabled(in: KeyedEntry(key: IsSelectionEnabledTraitKey.self, value: false)) == false)
+        #expect(TraitCollectionValues.selectionEnabled(in: KeyedEntry(key: IsSelectionEnabledTraitKey.self, value: true)) == true)
+    }
+
+    @Test("The reader ignores other traits")
+    func ignoresOtherTraits() {
+        #expect(TraitCollectionValues.selectionEnabled(in: GenericEntry<OtherTraitKey>(value: false)) == nil)
+        #expect(TraitCollectionValues.selectionEnabled(in: KeyedEntry(key: OtherTraitKey.self, value: false)) == nil)
     }
 
     @Test("A plain child is not disabled")

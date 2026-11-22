@@ -149,7 +149,7 @@ ForEach(subviews: content) { subview in
 }
 ```
 
-SwiftUI does not expose this flag, so the package reads a private SwiftUI trait by reflection. If a future OS renames it, the value is `false`; the tests of this package check it on every supported OS. It only sees the modifier on the child itself (also on a `Group`, but not on a stack around the child).
+SwiftUI does not expose this flag, so the package reads a private SwiftUI trait by reflection. If a future OS renames it, the value is `false`. The tests of this package check it in CI on macOS 15 and an iOS 26 simulator, and on macOS 27 and an iOS 27 simulator; iOS 17 and 18 were not checked. It only sees the modifier on the child itself (also on a `Group`, but not on a stack around the child).
 
 ### tabViewPageClipDisabled
 

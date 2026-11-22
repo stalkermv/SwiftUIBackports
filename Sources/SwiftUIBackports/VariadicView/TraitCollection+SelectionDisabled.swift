@@ -14,7 +14,9 @@ extension TraitCollectionValues {
     /// ```
     ///
     /// SwiftUI does not expose this flag, so it is read by reflection from the private
-    /// `IsSelectionEnabledTraitKey` trait that the modifier writes. Keep these limits in mind:
+    /// `IsSelectionEnabledTraitKey` trait that the modifier writes. The layout of that trait
+    /// differs between OS versions; the tests check macOS 15 and macOS 27 and the iOS 26 and 27
+    /// simulators. Keep these limits in mind:
     ///
     /// - If a future OS renames or reshapes that trait, this returns `false` instead of failing.
     ///   The tests of this package check the trait on every supported OS.
@@ -26,13 +28,26 @@ extension TraitCollectionValues {
     /// - Returns: `true` if selection is disabled. If the modifier is not applied, `false`.
     public var selectionDisabled: Bool {
         for entry in values {
-            let fields = Mirror(reflecting: entry).children
-            guard let key = fields.first(where: { $0.label == "key" }),
-                  String(reflecting: key.value).contains("IsSelectionEnabledTraitKey"),
-                  let isEnabled = fields.first(where: { $0.label == "value" })?.value as? Bool
-            else { continue }
-            return !isEnabled
+            if let isEnabled = Self.selectionEnabled(in: entry) {
+                return !isEnabled
+            }
         }
         return false
+    }
+
+    /// The "selection enabled" flag of one trait entry, or `nil` if the entry is not the
+    /// selection trait.
+    ///
+    /// SwiftUI stores the key of a trait in different places: as a `key` field of the entry
+    /// (OS 27) or as a generic argument of the entry type, `AnyTrait<IsSelectionEnabledTraitKey>`
+    /// (older OS versions). Both are matched by name, and the value is the `value` field.
+    static func selectionEnabled(in entry: Any) -> Bool? {
+        let keyName = "IsSelectionEnabledTraitKey"
+        let fields = Array(Mirror(reflecting: entry).children)
+        let keyField = fields.first { $0.label == "key" }.map { String(reflecting: $0.value) } ?? ""
+        guard String(reflecting: type(of: entry)).contains(keyName) || keyField.contains(keyName) else {
+            return nil
+        }
+        return (fields.first { $0.label == "value" } ?? fields.first { $0.value is Bool })?.value as? Bool
     }
 }
