@@ -9,6 +9,10 @@
   
 import SwiftUI
 
+@available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
 public struct ContainerRelativeFrameModifier: ViewModifier {
     let axes: Axis.Set
     let alignment: Alignment

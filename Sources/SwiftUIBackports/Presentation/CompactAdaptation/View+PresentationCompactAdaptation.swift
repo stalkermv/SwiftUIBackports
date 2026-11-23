@@ -40,6 +40,9 @@ extension View {
     ///   or vertically compact size class.
     @available(iOS, introduced: 15, deprecated: 16.4, message: "Use `View.presentationCompactAdaptation(_:)` instead.")
     @_disfavoredOverload
+    @available(macOS, deprecated: 13.3, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 16.4, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 9.4, message: "Use the native SwiftUI API.")
     @ViewBuilder public func presentationCompactAdaptation(_ adaptation: PresentationAdaptationBackport) -> some View {
         if #available(iOS 16.4, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             self.presentationCompactAdaptation(adaptation.backportValue)
@@ -54,6 +57,10 @@ extension View {
     }
 }
 
+@available(iOS, deprecated: 16.4, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 13.3, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 16.4, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 9.4, message: "Use the native SwiftUI API.")
 public enum PresentationAdaptationBackport : Sendable {
 
     /// Use the default presentation adaptation.
@@ -90,6 +97,9 @@ public enum PresentationAdaptationBackport : Sendable {
 
 #if canImport(UIKit)
 @available(iOS, introduced: 15, deprecated: 16.4)
+@available(macOS, deprecated: 13.3, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 16.4, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 9.4, message: "Use the native SwiftUI API.")
 public struct PresentationCompactAdaptationModifier: ViewModifier {
     let adaptation: PresentationAdaptationBackport
     

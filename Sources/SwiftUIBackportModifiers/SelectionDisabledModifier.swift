@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+@available(iOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
+@available(macOS, deprecated: 14.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
+@available(tvOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
+@available(watchOS, deprecated: 10.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
 public struct SelectionDisabledModifier: ViewModifier {
     private var isDisabled: Bool
     
@@ -25,6 +29,10 @@ public struct SelectionDisabledModifier: ViewModifier {
     }
 }
 
+@available(iOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
+@available(macOS, deprecated: 14.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
+@available(tvOS, deprecated: 17.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
+@available(watchOS, deprecated: 10.0, message: "Use the native selectionDisabled(_:) modifier; reading the flag with traitValues.selectionDisabled keeps working in 2.0.")
 public struct SelectionDisabledTraitKey: _ViewTraitKey {
     public static let defaultValue: Bool = false
 }

@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+@available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
 public struct InvalidatableContentBackportModifier: ViewModifier {
     
     let invalidatable: Bool
@@ -21,6 +25,10 @@ public struct InvalidatableContentBackportModifier: ViewModifier {
     }
 }
 
+@available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
 public struct SwiftUITestModifier: ViewModifier {
     let test = true
 

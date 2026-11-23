@@ -23,6 +23,10 @@ extension View {
     /// different kinds of display modes. This modifier has no effect
     /// on macOS.
     @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+    @available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
     nonisolated public func toolbarTitleDisplayMode(_ mode: ToolbarTitleDisplayModeBackport) -> some View {
         if #available (iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
             return self.toolbarTitleDisplayMode(mode.backportValue)
@@ -37,6 +41,10 @@ extension View {
 
 }
 
+@available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
 public enum ToolbarTitleDisplayModeBackport {
 
     /// The automatic mode.

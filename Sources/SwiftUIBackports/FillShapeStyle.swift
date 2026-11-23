@@ -23,11 +23,19 @@ extension ShapeStyle where Self == FillShapeStyle {
     /// input fields, search bars, or buttons on iOS.
     /// Use the quaternary version of this style to fill large areas that
     /// contain complex content, such as an expanded table cell on iOS.
+    @available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+    @available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+    @available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
     @_disfavoredOverload public static var fill: FillShapeStyle {
         FillShapeStyle()
     }
 }
 
+@available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
 public struct FillShapeStyle: ShapeStyleBackport {
     
     public init() {}
@@ -41,6 +49,10 @@ public struct FillShapeStyle: ShapeStyleBackport {
     }
 }
 
+@available(iOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 14.0, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 17.0, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 10.0, message: "Use the native SwiftUI API.")
 public protocol ShapeStyleBackport: ShapeStyle {
     associatedtype Shape: ShapeStyle
     func resolve(in environment: EnvironmentValues) -> Shape

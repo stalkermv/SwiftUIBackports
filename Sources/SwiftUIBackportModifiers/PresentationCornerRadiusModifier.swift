@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+@available(iOS, deprecated: 16.4, message: "Use the native SwiftUI API.")
+@available(macOS, deprecated: 13.3, message: "Use the native SwiftUI API.")
+@available(tvOS, deprecated: 16.4, message: "Use the native SwiftUI API.")
+@available(watchOS, deprecated: 9.4, message: "Use the native SwiftUI API.")
 public struct PresentationCornerRadiusModifier: ViewModifier {
     let cornerRadius: CGFloat?
     
