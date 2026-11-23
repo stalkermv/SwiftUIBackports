@@ -13,11 +13,11 @@ You can add SwiftUIBackports to your project using Swift Package Manager:
 2. Enter the repository URL: https://github.com/stalkermv/SwiftUIBackports
 3. Choose the version you need.
 
-Alternatively, add it directly to your Package.swift:
+Alternatively, add it directly to your Package.swift. 2.0 is currently a pre-release, so the requirement has to name it; `from: "2.0.0"` does not resolve pre-releases:
 
 ```
 dependencies: [
-    .package(url: "https://github.com/stalkermv/SwiftUIBackports.git", from: "2.0.0")
+    .package(url: "https://github.com/stalkermv/SwiftUIBackports.git", from: "2.0.0-beta.1")
 ]
 ```
 
@@ -39,7 +39,7 @@ The `onScrollGeometryChange` fallback on iOS 17 / tvOS 17 and `tabViewPageClipDi
 ```swift
 .package(
     url: "https://github.com/stalkermv/SwiftUIBackports.git",
-    from: "2.0.0",
+    from: "2.0.0-beta.1",
     traits: ["useSwiftUIIntrospect"]
 )
 ```
