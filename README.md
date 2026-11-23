@@ -190,7 +190,7 @@ What 2.0 still provides:
 
 ## Migrating from 1.x
 
-2.0 drops iOS 16 / macOS 13 and removes every backport whose native API is available at the new minimums. 1.2.0 marks all of them as deprecated, so build against 1.2.0 first and fix the warnings.
+2.0 drops iOS 16 / macOS 13 and removes every backport whose native API is available at the new minimums. Replace each removed API with its native counterpart from the table below before you update.
 
 | Removed in 2.0 | Use instead |
 |---|---|
