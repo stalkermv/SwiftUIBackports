@@ -121,13 +121,15 @@ jobs:
   build-introspect:
     # xcodebuild has no option for package traits, so the trait-enabled builds for the
     # other platforms go through SwiftPM with the platform SDK and a target triple.
+    # Mac Catalyst is left out: SwiftPM in Xcode 16.3 cannot build a macabi triple
+    # (it targets iOS 13.0-macabi for SwiftUIIntrospect and finds no SwiftUI). The
+    # Catalyst code paths are the iOS ones, which the iOS entry builds.
     runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
         include:
           - { name: iOS, sdk: iphoneos, platform: iOS, triple: arm64-apple-ios17.0 }
-          - { name: Mac Catalyst, sdk: macosx, platform: macOS, triple: arm64-apple-ios17.0-macabi }
           - { name: tvOS, sdk: appletvos, platform: tvOS, triple: arm64-apple-tvos17.0 }
           - { name: visionOS, sdk: xros, platform: visionOS, triple: arm64-apple-xros2.0 }
 
