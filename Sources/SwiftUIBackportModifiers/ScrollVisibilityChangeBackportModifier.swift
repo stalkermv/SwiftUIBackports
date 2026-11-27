@@ -20,7 +20,11 @@ public struct ScrollVisibilityChangeBackportModifier: ViewModifier {
     }
     
     public func body(content: Content) -> some View {
-        #if canImport(UIKit)
+        #if os(visionOS)
+        // UIScreen is unavailable on visionOS, and the native modifier is available from visionOS 2.
+        content
+            .onScrollVisibilityChange(threshold: Double(threshold), onChange)
+        #elseif canImport(UIKit) && !os(watchOS)
         let bounds = UIScreen.main.bounds
         content
             .onGeometryChange(for: Bool.self) { proxy in

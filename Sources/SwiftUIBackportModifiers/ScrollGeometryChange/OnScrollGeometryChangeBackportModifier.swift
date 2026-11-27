@@ -1,10 +1,11 @@
 //
 //  OnScrollGeometryChangeBackportModifier.swift
-//  SwiftUIHelpers
+//  SwiftUIBackports
 //
 //  Created by Valeriy Malishevskyi on 01.10.2024.
 //
-#if canImport(UIKit)
+// UIScrollView-based fallback; not available on watchOS.
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 #if USE_SWIFTUI_INTROSPECT
 import SwiftUIIntrospect
@@ -23,7 +24,7 @@ public struct OnScrollGeometryChangeBackportModifier<T: Equatable> : ViewModifie
     }
     
     public func body(content: Content) -> some View {
-        if #available(iOS 18.0, *) {
+        if #available(iOS 18.0, tvOS 18.0, *) {
             content
                 .onScrollGeometryChange(
                     for: type,
@@ -63,32 +64,31 @@ struct ScrollGeometryProxyWrapper<T>: ViewModifier where T: Equatable {
 
     func body(content: Content) -> some View {
         #if USE_SWIFTUI_INTROSPECT
-        content
-            .introspect(.scrollView, on: .iOS(.v16, .v17)) { scrollView in
-                DispatchQueue.main.async {
-                    manager.observe(scrollable: scrollView, transform, action)
-                }
-            }
+        #if os(tvOS)
+        content.introspect(.scrollView, on: .tvOS(.v17), customize: observe)
+        #elseif os(visionOS)
+        content.introspect(.scrollView, on: .visionOS(.v2), customize: observe)
+        #else
+        // iOS and Mac Catalyst
+        content.introspect(.scrollView, on: .iOS(.v17), customize: observe)
+        #endif
         #else
         content
         #endif
     }
-}
 
-private struct OnChangeModifier<V: Equatable> : ViewModifier {
-    let value: V
-    let action: (V, V) -> Void
-    
-    public func body(content: Content) -> some View {
-        content
-            .onChange(of: value) { [oldValue = value] newValue in
-                action(oldValue, newValue)
-            }
+    #if USE_SWIFTUI_INTROSPECT
+    private func observe(_ scrollView: UIScrollView) {
+        DispatchQueue.main.async {
+            manager.observe(scrollable: scrollView, transform, action)
+        }
     }
+    #endif
 }
 
 import Combine
 
+@available(iOS, introduced: 14.0, deprecated: 18.0)
 @MainActor private final class ObservationManager<T: Equatable> {
 
     private(set) var geometry = ScrollGeometry() {
@@ -114,6 +114,8 @@ import Combine
     
     private var transform: ((ScrollGeometry) -> T)?
     private var action: ((_ oldValue: T, _ newValue: T) -> Void)?
+    
+    nonisolated init() {}
     
     func observe(
         scrollable: UIScrollView,

@@ -1,6 +1,6 @@
 # SwiftUIBackports
 
-SwiftUIBackports is a Swift package that brings newer SwiftUI APIs to older iOS versions, enabling developers to use the latest SwiftUI features while maintaining compatibility with earlier iOS releases.
+SwiftUIBackports is a Swift package that brings newer SwiftUI APIs to older OS versions, enabling developers to use the latest SwiftUI features while maintaining compatibility with earlier iOS releases.
 
 ## Features
 - Backported SwiftUI APIs: Utilize modern SwiftUI components on older iOS versions.
@@ -11,13 +11,13 @@ SwiftUIBackports is a Swift package that brings newer SwiftUI APIs to older iOS 
 You can add SwiftUIBackports to your project using Swift Package Manager:
 1. In Xcode, go to File > Add Packages…
 2. Enter the repository URL: https://github.com/stalkermv/SwiftUIBackports
-3. Select the development branch.
+3. Choose the version you need.
 
-Alternatively, add it directly to your Package.swift:
+Alternatively, add it directly to your Package.swift. 2.0 is currently a pre-release, so the requirement has to name it; `from: "2.0.0"` does not resolve pre-releases:
 
 ```
 dependencies: [
-    .package(url: "https://github.com/stalkermv/SwiftUIBackports.git", branch: "development")
+    .package(url: "https://github.com/stalkermv/SwiftUIBackports.git", from: "2.0.0-beta.1")
 ]
 ```
 
@@ -26,21 +26,209 @@ dependencies: [
 Import SwiftUIBackports in your SwiftUI files:
 
 ```swift
+import SwiftUI
 import SwiftUIBackports
 ```
 
-Then, use the backported APIs as you would normally. For example:
+The backports use the same names as the native APIs. On OS versions that ship the native API the native one is used; elsewhere the backport takes over.
+
+### Optional: SwiftUIIntrospect
+
+The `onScrollGeometryChange` fallback on iOS 17 / tvOS 17 and `tabViewPageClipDisabled` need to reach into UIKit/AppKit views. They do this through [swiftui-introspect](https://github.com/siteline/swiftui-introspect), which is only linked when you enable the `useSwiftUIIntrospect` trait. Without the trait both still compile, but the iOS 17 / tvOS 17 `onScrollGeometryChange` fallback and `tabViewPageClipDisabled` have no effect. The trait has no effect on watchOS, where SwiftUIIntrospect is not available.
 
 ```swift
-// Example usage of a backported API
+.package(
+    url: "https://github.com/stalkermv/SwiftUIBackports.git",
+    from: "2.0.0-beta.1",
+    traits: ["useSwiftUIIntrospect"]
+)
 ```
 
+### onScrollGeometryChange
+
+Available on iOS, Mac Catalyst, tvOS and visionOS (not macOS or watchOS). Native on iOS 18 / tvOS 18 / visionOS 2.
+
+```swift
+struct HeaderExample: View {
+    @State private var isScrolled = false
+
+    var body: some View {
+        ScrollView {
+            // ...
+        }
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y > geometry.contentInsets.top
+        } action: { _, isScrolled in
+            self.isScrolled = isScrolled
+        }
+    }
+}
+```
+
+### onScrollVisibilityChange
+
+Native on iOS 18 / macOS 15 / tvOS 18 / watchOS 11 / visionOS 2. The fallback runs on iOS, Mac Catalyst and tvOS; on macOS 14 and watchOS 10 it does nothing.
+
+```swift
+Text("Video")
+    .onScrollVisibilityChange(threshold: 0.5) { isVisible in
+        isPlaying = isVisible
+    }
+```
+
+### ForEach(subviews:) and Group(subviews:)
+
+```swift
+struct Card<Content: View>: View {
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        VStack {
+            ForEach(subviews: content) { subview in
+                subview.padding()
+            }
+        }
+    }
+}
+
+struct Summary<Content: View>: View {
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        Group(subviews: content) { subviews in
+            Text("\(subviews.count) items")
+            subviews.first
+        }
+    }
+}
+```
+
+### Trait values, tags and ViewTree
+
+`Subview.traitValues` reads the trait values and tag of a subview. `traitValue(_:_:)` sets a custom trait, and `ViewTree` exposes the children of a view directly.
+
+```swift
+struct BadgeKey: TraitValueKey {
+    static let defaultValue = 0
+}
+
+extension TraitCollectionValues {
+    var badge: Int { self[BadgeKey.self] }
+}
+
+struct BadgeList<Content: View>: View {
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        ViewTree(content) { children in
+            ForEach(children) { child in
+                HStack {
+                    child
+                    Text("\(child.traitValues.badge)")
+                    if child.traitValues.hasTag("selected") { Text("✓") }
+                }
+            }
+        }
+    }
+}
+
+BadgeList {
+    Text("Inbox").traitValue(BadgeKey.self, 3).tag("selected")
+    Text("Sent")
+}
+```
+
+### Reading selectionDisabled in custom containers
+
+`traitValues.selectionDisabled` tells a custom container whether a child has the native `selectionDisabled(_:)` modifier, like `Picker` and `List` do.
+
+```swift
+ForEach(subviews: content) { subview in
+    Button { select(subview) } label: { subview }
+        .disabled(subview.traitValues.selectionDisabled)
+}
+```
+
+SwiftUI does not expose this flag, so the package reads a private SwiftUI trait by reflection. If a future OS renames it, the value is `false`. The tests of this package check it in CI on macOS 15 and an iOS 26 simulator. They also passed on macOS 27 and an iOS 27 simulator, but CI has no job for those yet. iOS 17 and 18 were not checked. It only sees the modifier on the child itself (also on a `Group`, but not on a stack around the child).
+
+### tabViewPageClipDisabled
+
+Requires the `useSwiftUIIntrospect` trait; applies to iOS and macOS. On other platforms, including tvOS and visionOS, the view is returned unchanged.
+
+```swift
+TabView {
+    Text("One")
+    Text("Two")
+}
+.tabViewPageClipDisabled()
+```
+
+### DragGesture(allowedDirections:)
+
+Lives in the separate `SwiftUIBackportsUnsafe` product; see [Migrating `DragGesture(allowedDirections:)`](#migrating-draggestureallowedirections).
 
 ## Compatibility
 
-SwiftUIBackports is compatible with:
-- iOS 16 and later
-- Swift 6.1 and later
+| Platform | Minimum |
+|---|---|
+| iOS | 17.0 |
+| macOS | 14.0 |
+| Mac Catalyst | 17.0 |
+| tvOS | 17.0 |
+| watchOS | 10.0 |
+| visionOS | 2.0 |
+
+Swift 6.1 or later. The optional `useSwiftUIIntrospect` trait enables the SwiftUIIntrospect-based code paths.
+
+What 2.0 still provides:
+
+- `onScrollGeometryChange` (native on iOS 18 / tvOS 18 / visionOS 2; fallback not available on watchOS)
+- `onScrollVisibilityChange` (native on iOS 18 / macOS 15 / tvOS 18 / watchOS 11 / visionOS 2)
+- `ForEach(subviews:)` and `Group(subviews:)` (native on iOS 18)
+- `Subview.traitValues`, `tag(for:)`, `hasTag(_:)`, `traitValue(_:_:)`, `ViewTree`
+- `tabViewPageClipDisabled(_:)`
+
+## Migrating from 1.x
+
+2.0 drops iOS 16 / macOS 13 and removes every backport whose native API is available at the new minimums. Replace each removed API with its native counterpart from the table below before you update.
+
+| Removed in 2.0 | Use instead |
+|---|---|
+| `onChange(of:initial:_:)` | native `onChange(of:initial:_:)` (iOS 17) |
+| `safeAreaPadding(_:)` | native `safeAreaPadding` (iOS 17) |
+| `contentMargins(_:_:for:)`, `ContentMarginPlacementBackport` | native `contentMargins` (iOS 17) |
+| `containerRelativeFrame(...)` | native `containerRelativeFrame` (iOS 17) |
+| `scrollTargetLayout()`, `scrollTargetBehavior(_:)`, `ScrollTargetBehaviorBackport` | native scroll target APIs (iOS 17) |
+| `scrollPosition(id:anchor:)` | native `scrollPosition(id:anchor:)` (iOS 17) |
+| `scrollClipDisabled(_:)` | native `scrollClipDisabled` (iOS 17) |
+| `sensoryFeedback(...)`, `SensoryFeedbackBackport` | native `sensoryFeedback` (iOS 17; the `.pathComplete` feedback needs iOS 17.5, macOS 14.5, tvOS 17.5, watchOS 10.5 or visionOS 26) |
+| `invalidatableContent(_:)`, `RedactionReasons.invalidated` | native `invalidatableContent` (iOS 17) |
+| `toolbarTitleDisplayMode(_:)`, `ToolbarTitleDisplayModeBackport` | native `toolbarTitleDisplayMode` (iOS 17) |
+| `ContentUnavailableView` (backport) | native `ContentUnavailableView` (iOS 17) |
+| `ShapeStyle.fill`, `FillShapeStyle`, `ShapeStyleBackport` | native `.fill` (iOS 17) |
+| `presentationCornerRadius(_:)` | native (iOS 16.4) |
+| `presentationBackgroundInteraction(_:)`, `PresentationBackgroundInteractionBackport`, `PresentationDetentReference` | native (iOS 16.4) |
+| `presentationCompactAdaptation(_:)`, `PresentationAdaptationBackport` | native (iOS 16.4) |
+| `Text(_:format:)` | native (iOS 15) |
+| `selectionDisabled(_:)`, `SelectionDisabledModifier`, `SelectionDisabledTraitKey` | native `selectionDisabled(_:)` (iOS 17 / macOS 14) |
+| `traitValues.selectionDisabled` | still available, now reads the flag of the native `selectionDisabled(_:)` (see above) |
+| `DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` | moved to the separate `SwiftUIBackportsUnsafe` product (not a backport of a public API) |
+
+### Migrating `DragGesture(allowedDirections:)`
+
+`DragGesture(minimumDistance:coordinateSpace:allowedDirections:)` wraps a non-public SwiftUI initializer rather than backporting a public OS API. Its previous `unsafeBitCast` implementation trapped on OS 27 (`SwiftUI.DragGesture` grew from 50 to 59 bytes). In 2.0 it lives in the separate `SwiftUIBackportsUnsafe` product, which now calls SwiftUI's own initializer, so it no longer depends on the layout of `DragGesture`. It is available on iOS, macOS, Mac Catalyst, watchOS and visionOS, and unavailable on tvOS, where `DragGesture` itself does not exist.
+
+```swift
+// Package.swift
+.product(name: "SwiftUIBackportsUnsafe", package: "SwiftUIBackports")
+
+// Source
+import SwiftUIBackportsUnsafe
+
+let swipe = DragGesture(minimumDistance: 10, coordinateSpace: .local, allowedDirections: .horizontal)
+```
+
+> **Experimental.** `SwiftUIBackportsUnsafe` links against a non-public SwiftUI symbol. It can break on any OS update, is not covered by semantic versioning, and is kept out of the main product so that apps which do not import it never link that symbol.
 
 ## Contributing
 

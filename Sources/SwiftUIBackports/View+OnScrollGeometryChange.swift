@@ -1,11 +1,11 @@
 //
 //  View+OnScrollGeometryChange.swift
-//  SwiftUIHelpers
+//  SwiftUIBackports
 //
 //  Created by Valeriy Malishevskyi on 01.10.2024.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import SwiftUI
 import SwiftUIBackportModifiers
 
@@ -17,15 +17,15 @@ extension View {
     /// You should avoid updating large parts of your app whenever
     /// the scroll geometry changes. To aid in this, you provide two
     /// closures to this modifier:
-    ///   * transform: This converts a value of ``ScrollGeometry`` to a
+    ///   * transform: This converts a value of `ScrollGeometry` to a
     ///     your own data type.
     ///   * action: This provides the data type you created in `of`
     ///     and is called whenever the data type changes.
     ///
     /// For example, you can use this modifier to know when the user scrolls
     /// a scroll view beyond the top of its content. In the following example,
-    /// the data type you convert to is a ``Bool`` and the action is called
-    /// whenever the ``Bool`` changes.
+    /// the data type you convert to is a `Bool` and the action is called
+    /// whenever the `Bool` changes.
     ///
     ///     @Binding var isBeyondZero: Bool
     ///
@@ -55,15 +55,14 @@ extension View {
     ///     }
     ///
     /// For responding to non-scroll geometry changes, see the
-    /// ``View/onGeometryChange(for:of:action:)`` modifier.
+    /// `onGeometryChange(for:of:action:)` modifier.
     ///
     /// - Parameters:
-    ///   - type: The type of value transformed from a ``ScrollGeometry``.
-    ///   - transform: A closure that transforms a ``ScrollGeometry``
+    ///   - type: The type of value transformed from a `ScrollGeometry`.
+    ///   - transform: A closure that transforms a `ScrollGeometry`
     ///     to your type.
-    ///   - action: A closure to run when the transformed data changes.
-    ///   - oldValue: The old value that failed the comparison check.
-    ///   - newValue: The new value that failed the comparison check.
+    ///   - action: A closure to run when the transformed data changes. It receives
+    ///     the old value that failed the comparison check and the new value.
     @available(iOS, introduced: 14.0, deprecated: 18.0)
     @_disfavoredOverload
     public func onScrollGeometryChange<T>(

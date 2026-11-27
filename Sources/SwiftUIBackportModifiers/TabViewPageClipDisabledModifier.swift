@@ -1,6 +1,6 @@
 //
 //  TabViewPageClipDisabledModifier.swift
-//  SwiftUIHelpers
+//  SwiftUIBackports
 //
 //  Created by Valeriy Malishevskyi on 15.11.2024.
 //
@@ -18,24 +18,23 @@ public struct TabViewPageClipDisabledModifier: ViewModifier {
     }
     
     public func body(content: Content) -> some View {
-        #if USE_SWIFTUI_INTROSPECT
-        #if os(iOS)
+        #if USE_SWIFTUI_INTROSPECT && os(iOS)
         content
             .introspect(
                 .tabView(style: .page),
-                on: .iOS(.v16),
-                .iOS(.v17),
+                on: .iOS(.v17),
                 .iOS(.v18),
                 .iOS(.v26)
             ) { scrollView in
             scrollView.clipsToBounds = !isDisabled
         }
-        #elseif os(macOS)
-        content.introspect(.tabView, on: .macOS(.v10_15, .v11, .v12, .v13, .v14, .v15)) { tabView in
+        #elseif USE_SWIFTUI_INTROSPECT && os(macOS)
+        content.introspect(.tabView, on: .macOS(.v14, .v15)) { tabView in
             tabView.clipsToBounds = !isDisabled
         }
-        #endif
         #else
+        // Without the SwiftUIIntrospect trait, and on platforms other than iOS and macOS
+        // (tvOS, visionOS, watchOS), the content is returned unchanged.
         content
         #endif
     }

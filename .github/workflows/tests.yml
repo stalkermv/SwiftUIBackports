@@ -1,17 +1,15 @@
-# This workflow will build a Swift project
+# This workflow will build and test the Swift package
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
 name: Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/**" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
-  build:
-
+  test:
     runs-on: macos-15
 
     steps:
@@ -22,3 +20,142 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: swift test -v
+    - name: Run tests with SwiftUIIntrospect
+      run: swift test -v --traits useSwiftUIIntrospect
+
+  test-ios:
+    runs-on: macos-15
+
+    steps:
+    - name: Select Xcode 16.3
+      run: sudo xcode-select -s /Applications/Xcode_16.3.app
+    - uses: actions/checkout@v4
+    - name: Run tests on an iOS Simulator
+      run: |
+        log="${RUNNER_TEMP:-/tmp}/test-ios.log"
+        # Newest available iPhone simulator; its name changes between runner images.
+        simulator() {
+          xcrun simctl list devices available iPhone | grep -Eo '[0-9A-F]{8}(-[0-9A-F]{4}){3}-[0-9A-F]{12}' | tail -1
+        }
+        # Installing a platform downloads it from Apple and fails now and then on a network
+        # error, so try up to three times with a pause in between.
+        download_platform() {
+          for pause in 0 15 45; do
+            sleep "$pause"
+            if xcodebuild -downloadPlatform "$1"; then
+              return 0
+            fi
+          done
+          return 1
+        }
+        run_tests() {
+          udid="$(simulator)"
+          if [ -z "$udid" ]; then
+            echo "No iOS simulator available" | tee "$log"
+            return 1
+          fi
+          xcodebuild test -scheme SwiftUIBackports-Package -destination "platform=iOS Simulator,id=$udid" 2>&1 | tee "$log"
+          return "${PIPESTATUS[0]}"
+        }
+        if ! run_tests; then
+          # Some runners come without the iOS platform. Install it and retry;
+          # fail on any other error.
+          if grep -qE "is not installed|No iOS simulator available" "$log"; then
+            download_platform iOS
+            run_tests
+          else
+            exit 1
+          fi
+        fi
+
+  build:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        scheme: [ SwiftUIBackports, SwiftUIBackportsUnsafe ]
+        destination:
+          - generic/platform=iOS
+          - generic/platform=macOS,variant=Mac Catalyst
+          - generic/platform=tvOS
+          - generic/platform=watchOS
+          - generic/platform=visionOS
+
+    steps:
+    - name: Select Xcode 16.3
+      run: sudo xcode-select -s /Applications/Xcode_16.3.app
+    - uses: actions/checkout@v4
+    - name: Build ${{ matrix.scheme }} for ${{ matrix.destination }}
+      env:
+        SCHEME: ${{ matrix.scheme }}
+        DESTINATION: ${{ matrix.destination }}
+      run: |
+        log="${RUNNER_TEMP:-/tmp}/build.log"
+        # Installing a platform downloads it from Apple and fails now and then on a network
+        # error, so try up to three times with a pause in between.
+        download_platform() {
+          for pause in 0 15 45; do
+            sleep "$pause"
+            if xcodebuild -downloadPlatform "$1"; then
+              return 0
+            fi
+          done
+          return 1
+        }
+        build() {
+          xcodebuild build -scheme "$SCHEME" -destination "$DESTINATION" CODE_SIGNING_ALLOWED=NO 2>&1 | tee "$log"
+          return "${PIPESTATUS[0]}"
+        }
+        if ! build; then
+          # Some runners come without the device platform that Xcode needs for a
+          # generic destination. Install it and retry; fail on any other error.
+          platform="${DESTINATION#generic/platform=}"
+          if grep -q "is not installed" "$log"; then
+            download_platform "$platform"
+            build
+          else
+            exit 1
+          fi
+        fi
+
+  build-introspect:
+    # xcodebuild has no option for package traits, so the trait-enabled builds for the
+    # other platforms go through SwiftPM with the platform SDK and a target triple.
+    # Mac Catalyst is left out: SwiftPM in Xcode 16.3 cannot build a macabi triple
+    # (it targets iOS 13.0-macabi for SwiftUIIntrospect and finds no SwiftUI). The
+    # Catalyst code paths are the iOS ones, which the iOS entry builds.
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: iOS, sdk: iphoneos, platform: iOS, triple: arm64-apple-ios17.0 }
+          - { name: tvOS, sdk: appletvos, platform: tvOS, triple: arm64-apple-tvos17.0 }
+          - { name: visionOS, sdk: xros, platform: visionOS, triple: arm64-apple-xros2.0 }
+
+    steps:
+    - name: Select Xcode 16.3
+      run: sudo xcode-select -s /Applications/Xcode_16.3.app
+    - uses: actions/checkout@v4
+    - name: Build with SwiftUIIntrospect for ${{ matrix.name }}
+      env:
+        SDK: ${{ matrix.sdk }}
+        PLATFORM: ${{ matrix.platform }}
+        TRIPLE: ${{ matrix.triple }}
+      run: |
+        # Installing a platform downloads it from Apple and fails now and then on a network
+        # error, so try up to three times with a pause in between.
+        download_platform() {
+          for pause in 0 15 45; do
+            sleep "$pause"
+            if xcodebuild -downloadPlatform "$1"; then
+              return 0
+            fi
+          done
+          return 1
+        }
+        if ! sdk_path="$(xcrun --sdk "$SDK" --show-sdk-path 2>/dev/null)"; then
+          download_platform "$PLATFORM"
+          sdk_path="$(xcrun --sdk "$SDK" --show-sdk-path)"
+        fi
+        swift build -v --traits useSwiftUIIntrospect --sdk "$sdk_path" --triple "$TRIPLE"
