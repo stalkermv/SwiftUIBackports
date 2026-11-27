@@ -149,7 +149,7 @@ ForEach(subviews: content) { subview in
 }
 ```
 
-SwiftUI does not expose this flag, so the package reads a private SwiftUI trait by reflection. If a future OS renames it, the value is `false`. The tests of this package check it in CI on macOS 15 and an iOS 26 simulator, and on macOS 27 and an iOS 27 simulator; iOS 17 and 18 were not checked. It only sees the modifier on the child itself (also on a `Group`, but not on a stack around the child).
+SwiftUI does not expose this flag, so the package reads a private SwiftUI trait by reflection. If a future OS renames it, the value is `false`. The tests of this package check it in CI on macOS 15 and an iOS 26 simulator. They also passed on macOS 27 and an iOS 27 simulator, but CI has no job for those yet. iOS 17 and 18 were not checked. It only sees the modifier on the child itself (also on a `Group`, but not on a stack around the child).
 
 ### tabViewPageClipDisabled
 
@@ -201,7 +201,7 @@ What 2.0 still provides:
 | `scrollTargetLayout()`, `scrollTargetBehavior(_:)`, `ScrollTargetBehaviorBackport` | native scroll target APIs (iOS 17) |
 | `scrollPosition(id:anchor:)` | native `scrollPosition(id:anchor:)` (iOS 17) |
 | `scrollClipDisabled(_:)` | native `scrollClipDisabled` (iOS 17) |
-| `sensoryFeedback(...)`, `SensoryFeedbackBackport` | native `sensoryFeedback` (iOS 17) |
+| `sensoryFeedback(...)`, `SensoryFeedbackBackport` | native `sensoryFeedback` (iOS 17; the `.pathComplete` feedback needs iOS 17.5, macOS 14.5, tvOS 17.5, watchOS 10.5 or visionOS 26) |
 | `invalidatableContent(_:)`, `RedactionReasons.invalidated` | native `invalidatableContent` (iOS 17) |
 | `toolbarTitleDisplayMode(_:)`, `ToolbarTitleDisplayModeBackport` | native `toolbarTitleDisplayMode` (iOS 17) |
 | `ContentUnavailableView` (backport) | native `ContentUnavailableView` (iOS 17) |

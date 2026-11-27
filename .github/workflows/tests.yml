@@ -117,3 +117,43 @@ jobs:
             exit 1
           fi
         fi
+
+  build-introspect:
+    # xcodebuild has no option for package traits, so the trait-enabled builds for the
+    # other platforms go through SwiftPM with the platform SDK and a target triple.
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: iOS, sdk: iphoneos, platform: iOS, triple: arm64-apple-ios17.0 }
+          - { name: Mac Catalyst, sdk: macosx, platform: macOS, triple: arm64-apple-ios17.0-macabi }
+          - { name: tvOS, sdk: appletvos, platform: tvOS, triple: arm64-apple-tvos17.0 }
+          - { name: visionOS, sdk: xros, platform: visionOS, triple: arm64-apple-xros2.0 }
+
+    steps:
+    - name: Select Xcode 16.3
+      run: sudo xcode-select -s /Applications/Xcode_16.3.app
+    - uses: actions/checkout@v4
+    - name: Build with SwiftUIIntrospect for ${{ matrix.name }}
+      env:
+        SDK: ${{ matrix.sdk }}
+        PLATFORM: ${{ matrix.platform }}
+        TRIPLE: ${{ matrix.triple }}
+      run: |
+        # Installing a platform downloads it from Apple and fails now and then on a network
+        # error, so try up to three times with a pause in between.
+        download_platform() {
+          for pause in 0 15 45; do
+            sleep "$pause"
+            if xcodebuild -downloadPlatform "$1"; then
+              return 0
+            fi
+          done
+          return 1
+        }
+        if ! sdk_path="$(xcrun --sdk "$SDK" --show-sdk-path 2>/dev/null)"; then
+          download_platform "$PLATFORM"
+          sdk_path="$(xcrun --sdk "$SDK" --show-sdk-path)"
+        fi
+        swift build -v --traits useSwiftUIIntrospect --sdk "$sdk_path" --triple "$TRIPLE"
